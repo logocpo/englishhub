@@ -4,8 +4,578 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>EnglishHub — Small Talk</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --brand:#2563EB;--brand-light:#EFF6FF;--brand-mid:#BFDBFE;--brand-dark:#1D4ED8;
+  --green:#16A34A;--green-light:#DCFCE7;
+  --red:#DC2626;--red-light:#FEE2E2;
+  --amber:#D97706;--amber-light:#FEF3C7;
+  --purple:#7C3AED;--purple-light:#F5F3FF;
+  --text1:#1a1a1a;--text2:#555;--text3:#999;
+  --bg:#fff;--bg2:#F8F9FA;--bg3:#F1F5F9;
+  --border:rgba(0,0,0,0.08);--border2:rgba(0,0,0,0.15);
+  --r:10px;--rl:16px;--shadow:0 2px 12px rgba(0,0,0,0.08);
+}
+html,body{min-height:100vh;background:var(--bg3);font-family:'Nunito',sans-serif;color:var(--text1);}
+.screen{display:none;max-width:440px;margin:0 auto;padding:16px 16px 40px;min-height:100vh;}
+.screen.active{display:block;}
+
+.app-header{display:flex;align-items:center;gap:10px;margin-bottom:24px;padding-top:8px;}
+.app-logo{width:40px;height:40px;background:var(--brand);border-radius:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.app-logo svg{width:22px;height:22px;fill:none;stroke:white;stroke-width:2;}
+.app-name{font-size:19px;font-weight:900;color:var(--text1);letter-spacing:-0.5px;}
+.app-tagline{font-size:11px;color:var(--text3);font-weight:600;margin-top:1px;}
+.pearson{margin-left:auto;background:var(--bg2);border:1px solid var(--border2);border-radius:6px;padding:4px 9px;font-size:10px;font-weight:800;color:var(--text2);}
+
+h1{font-size:24px;font-weight:900;color:var(--text1);margin-bottom:6px;letter-spacing:-0.5px;}
+h2{font-size:17px;font-weight:800;color:var(--text1);margin-bottom:14px;}
+.sub{font-size:14px;color:var(--text2);margin-bottom:22px;line-height:1.6;}
+.label{font-size:11px;font-weight:800;color:var(--text2);text-transform:uppercase;letter-spacing:0.6px;margin-bottom:6px;}
+
+input[type=text],select{width:100%;padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--text1);font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;margin-bottom:14px;}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
+
+.btn{width:100%;padding:13px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--text1);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s;margin-bottom:10px;display:flex;align-items:center;gap:12px;}
+.btn:hover{background:var(--bg2);}
+.btn.primary{background:var(--brand);border-color:var(--brand);color:white;justify-content:center;}
+.btn.success{background:var(--green);border-color:var(--green);color:white;justify-content:center;}
+.btn.danger{background:var(--red);border-color:var(--red);color:white;justify-content:center;padding:10px;}
+.btn-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
+.btn-text{flex:1;}
+.btn-title{font-size:14px;font-weight:800;}
+.btn-desc{font-size:12px;opacity:0.7;font-weight:600;}
+.btn-arrow{margin-left:auto;font-size:18px;opacity:0.4;}
+.back-btn{display:flex;align-items:center;gap:5px;border:none;background:none;color:var(--text2);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;padding:0 0 18px;margin-top:-8px;}
+.card{background:var(--bg);border-radius:var(--rl);border:1px solid var(--border);padding:18px;margin-bottom:12px;box-shadow:var(--shadow);}
+.card-title{font-size:15px;font-weight:800;color:var(--text1);margin-bottom:4px;}
+.card-sub{font-size:13px;color:var(--text2);}
+.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+
+.lobby-row{background:var(--bg);border-radius:var(--r);border:1px solid var(--border);padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);}
+.lobby-row:hover{border-color:var(--brand);}
+.lobby-name{font-size:14px;font-weight:800;color:var(--text1);}
+.lobby-meta{font-size:12px;color:var(--text2);margin-top:2px;}
+.lobby-count{font-size:12px;font-weight:800;background:var(--brand-light);color:var(--brand-dark);padding:4px 10px;border-radius:99px;flex-shrink:0;}
+
+.player-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.player-row:last-child{border-bottom:none;}
+.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.player-name-text{font-size:14px;font-weight:700;color:var(--text1);flex:1;}
+.tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;}
+.tag-host{background:var(--amber-light);color:#92400E;}
+.tag-you{background:var(--green-light);color:#166534;}
+.kick-btn{border:none;background:none;cursor:pointer;color:var(--red);font-size:15px;padding:4px 6px;border-radius:6px;}
+
+.warn-box{background:#FEF3C7;border:1px solid #FCD34D;border-radius:var(--r);padding:11px 14px;font-size:13px;font-weight:700;color:#92400E;margin-bottom:12px;display:none;}
+.warn-box.show{display:block;}
+.status-box{background:var(--brand-light);border:1px solid var(--brand-mid);border-radius:var(--r);padding:11px 14px;font-size:13px;font-weight:700;color:var(--brand-dark);margin-bottom:12px;text-align:center;}
+
+/* Gameplay */
+.situation-img{width:100%;border-radius:var(--r);border:1px solid var(--border);margin-bottom:14px;display:block;object-fit:cover;aspect-ratio:16/9;background:var(--bg2);}
+.situation-title{font-size:15px;font-weight:800;color:var(--text1);margin-bottom:6px;}
+.situation-body{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:14px;background:var(--bg2);border-radius:var(--r);padding:12px;}
+
+.role-card{border-radius:var(--r);border:2px solid;padding:14px;margin-bottom:10px;}
+.role-card.a{border-color:var(--brand);background:var(--brand-light);}
+.role-card.b{border-color:var(--purple);background:var(--purple-light);}
+.role-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;}
+.role-card.a .role-label{color:var(--brand-dark);}
+.role-card.b .role-label{color:var(--purple);}
+
+.phrase-section{margin-bottom:8px;}
+.phrase-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:4px;}
+.phrase-list{display:flex;flex-wrap:wrap;gap:6px;}
+.phrase-pill{background:white;border:1px solid var(--border2);border-radius:99px;padding:5px 11px;font-size:12px;font-weight:700;color:var(--text1);}
+.role-card.a .phrase-pill{border-color:rgba(37,99,235,0.3);color:var(--brand-dark);}
+.role-card.b .phrase-pill{border-color:rgba(124,58,237,0.3);color:var(--purple);}
+
+.timer-wrap{text-align:center;margin:14px 0;}
+.timer-ring{width:80px;height:80px;border-radius:50%;border:4px solid var(--brand);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 6px;transition:border-color 0.3s;}
+.timer-ring.warn{border-color:var(--red);}
+.timer-num{font-size:22px;font-weight:900;color:var(--brand);}
+.timer-ring.warn .timer-num{color:var(--red);}
+.timer-lbl{font-size:11px;color:var(--text2);font-weight:700;}
+
+.role-swap{background:var(--green-light);border:1px solid #86EFAC;border-radius:var(--r);padding:14px;text-align:center;margin-bottom:14px;display:none;}
+.role-swap.show{display:block;}
+.role-swap-title{font-size:14px;font-weight:900;color:#15803D;margin-bottom:4px;}
+.role-swap-sub{font-size:13px;color:#166534;}
+
+.empty{text-align:center;padding:32px 20px;color:var(--text3);}
+.empty-icon{font-size:36px;margin-bottom:10px;}
+.empty-text{font-size:14px;font-weight:700;}
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#1a1a1a;color:white;padding:10px 20px;border-radius:99px;font-size:13px;font-weight:700;opacity:0;transition:opacity 0.3s;pointer-events:none;z-index:999;}
+#toast.show{opacity:1;}
+.topic-row{display:flex;gap:8px;margin-bottom:14px;}
+.topic-row select{flex:1;margin-bottom:0;}
+.rand-btn{padding:0 14px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--text1);}
+</style>
 </head>
 <body>
-<p>Loading...</p>
+
+<!-- NICKNAME -->
+<div id="s-nick" class="screen active">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline">Small Talk Practice · B1</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <h1>Welcome!</h1>
+  <p class="sub">Enter your nickname to start practicing with your classmates.</p>
+  <div class="label">Your nickname</div>
+  <input type="text" id="nick-input" placeholder="e.g. Asel, Dima, Zarina…" maxlength="20" autocomplete="off">
+  <button class="btn primary" onclick="submitNick()">Continue →</button>
+  <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:16px;">Based on Pearson Student Books · How to start and end a conversation</p>
+</div>
+
+<!-- MENU -->
+<div id="s-menu" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="menu-hello">Hello!</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <h2>Small Talk</h2>
+  <p class="sub">How do you want to practice today?</p>
+  <button class="btn" onclick="goTo('s-lobbies')">
+    <div class="btn-icon" style="background:#EFF6FF;">👥</div>
+    <div class="btn-text"><div class="btn-title">Join a lobby</div><div class="btn-desc">Browse open rooms</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+  <button class="btn" onclick="goTo('s-create')">
+    <div class="btn-icon" style="background:#FEF3C7;">➕</div>
+    <div class="btn-text"><div class="btn-title">Create a lobby</div><div class="btn-desc">You become the host</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+  <button class="btn" onclick="goTo('s-solo')">
+    <div class="btn-icon" style="background:#DCFCE7;">🙋</div>
+    <div class="btn-text"><div class="btn-title">Play by myself</div><div class="btn-desc">See both roles, practice solo</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+</div>
+
+<!-- LOBBY LIST -->
+<div id="s-lobbies" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline">Join a lobby</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
+  <h2>Open lobbies</h2>
+  <div id="lobby-list"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Loading lobbies…</div></div></div>
+</div>
+
+<!-- JOINED -->
+<div id="s-joined" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="joined-lobby-label">Lobby</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <button class="back-btn" onclick="leaveLobby()">← Leave lobby</button>
+  <div class="card">
+    <div class="label">Scenario</div>
+    <div class="card-title" id="joined-topic">—</div>
+    <div class="divider"></div>
+    <div class="label">Players</div>
+    <div id="joined-players"></div>
+  </div>
+  <div class="status-box">⏳ Waiting for the host to start the game…</div>
+</div>
+
+<!-- CREATE -->
+<div id="s-create" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline">Create a lobby</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
+  <h2>Set up your lobby</h2>
+  <div class="label">Lobby name</div>
+  <input type="text" id="lobby-name-input" placeholder="e.g. Morning Practice" maxlength="30">
+  <div class="label">Scenario</div>
+  <div class="topic-row">
+    <select id="topic-select">
+      <option value="1">Scenario 1 — Local café</option>
+      <option value="2">Scenario 2 — Office kitchen</option>
+      <option value="3">Scenario 3 — Tech meetup</option>
+      <option value="4">Scenario 4 — Neighbourhood park</option>
+      <option value="5">Scenario 5 — Sports pub</option>
+    </select>
+    <button class="rand-btn" onclick="randomTopic()">🎲 Random</button>
+  </div>
+  <button class="btn primary" onclick="createLobby()">Create lobby →</button>
+</div>
+
+<!-- HOST -->
+<div id="s-host" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline">Host — managing lobby</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <button class="back-btn" onclick="hostLeave()">← Leave lobby</button>
+  <div class="card">
+    <div class="label">Lobby</div>
+    <div class="card-title" id="host-lobby-name">—</div>
+    <div class="label" style="margin-top:10px;">Scenario</div>
+    <div class="card-sub" id="host-topic-label">—</div>
+  </div>
+  <div class="label">Players (<span id="host-player-count">0</span>)</div>
+  <div class="card" style="padding:10px 16px;"><div id="host-player-list"></div></div>
+  <div class="warn-box" id="odd-warn">⚠️ You need an even number of players to start.</div>
+  <button class="btn success" onclick="startGame()">Start game →</button>
+</div>
+
+<!-- SOLO -->
+<div id="s-solo" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline">Solo practice</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
+  <div class="label">Choose a scenario</div>
+  <select id="solo-scenario-select" onchange="renderSolo()" style="margin-bottom:16px;">
+    <option value="1">Scenario 1 — Local café</option>
+    <option value="2">Scenario 2 — Office kitchen</option>
+    <option value="3">Scenario 3 — Tech meetup</option>
+    <option value="4">Scenario 4 — Neighbourhood park</option>
+    <option value="5">Scenario 5 — Sports pub</option>
+  </select>
+  <div id="solo-content"></div>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="game-room-label">Room 1</div></div>
+    <div class="pearson">PEARSON</div>
+  </div>
+  <div class="role-swap" id="role-swap-banner">
+    <div class="role-swap-title">Roles have changed! ✅</div>
+    <div class="role-swap-sub" id="role-swap-text">—</div>
+  </div>
+  <img id="game-img" class="situation-img" src="" alt="scenario">
+  <div class="situation-title" id="game-topic">—</div>
+  <div class="situation-body" id="game-situation">—</div>
+  <div id="game-role-card"></div>
+  <div class="timer-wrap">
+    <div class="timer-ring" id="timer-ring"><div class="timer-num" id="timer-num">1:30</div></div>
+    <div class="timer-lbl" id="timer-lbl">Time remaining</div>
+  </div>
+  <div id="host-end-btn" style="display:none;">
+    <button class="btn danger" onclick="hostEndRound()">End conversation</button>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getDatabase, ref, set, get, push, onValue, update, remove } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCjBkDDLG35D_vVucQ3EUHXVGq6z0hSrLw",
+  authDomain: "englishhub-f5938.firebaseapp.com",
+  databaseURL: "https://englishhub-f5938-default-rtdb.europe-west1.firebasedatabase.app",
+  projectId: "englishhub-f5938",
+  storageBucket: "englishhub-f5938.firebasestorage.app",
+  messagingSenderId: "699764548920",
+  appId: "1:699764548920:web:a1dc2e1b65daf96e694dcd"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// ── Scenario data ──────────────────────────────────────
+const SCENARIOS = {
+  '1': {
+    title: 'Scenario 1 — Local café',
+    image: 'Scenario1.png',
+    situation: 'You are both at a busy local café. [A] is sitting at a small table with a laptop, and [B] is looking for a place to sit and a power outlet to charge their phone.',
+    roleA: {
+      label: 'Person A — at the table with laptop',
+      start: ['I\'m (name), by the way.'],
+      keep: ['No problem', 'Go ahead', 'Not at all'],
+      end: ['(Great/Nice) talking to you', 'Have fun. / Have a good time.']
+    },
+    roleB: {
+      label: 'Person B — looking for a seat',
+      start: ['Excuse me, is anyone sitting here?', 'Do you mind if I charge my phone here?'],
+      keep: ['What about you?', 'How about you?', 'And you?'],
+      end: ['OK, nice to meet you', 'I\'ve got to go.']
+    }
+  },
+  '2': {
+    title: 'Scenario 2 — Office kitchen',
+    image: 'Scenario2.png',
+    situation: 'You are colleagues who haven\'t seen each other since the weekend. [A] and [B] meet in the office kitchen on Monday morning while the coffee machine is running.',
+    roleA: {
+      label: 'Person A — colleague',
+      start: ['It\'s a lovely morning, isn\'t it?', 'How was your weekend?'],
+      keep: ['Help yourself', 'Be my guest', 'No problem'],
+      end: ['I\'ve got to go', 'That\'s my bus!']
+    },
+    roleB: {
+      label: 'Person B — colleague',
+      start: ['Did you hear about the accident?', 'Are you doing anything nice at the weekend?'],
+      keep: ['What about you?', 'How about you?', 'And you?'],
+      end: ['See you later', '(Great/Nice) talking to you']
+    }
+  },
+  '3': {
+    title: 'Scenario 3 — Tech meetup',
+    image: 'Scenario3.png',
+    situation: 'You are both attending a large tech community meetup for the first time. You are standing in line at the registration desk.',
+    roleA: {
+      label: 'Person A — at registration',
+      start: ['Is this your first time here?', 'Excuse me, do you know if there\'s wifi?'],
+      keep: ['No problem', 'Go ahead', 'Help yourself'],
+      end: ['(Great/Nice) talking to you', 'See you later']
+    },
+    roleB: {
+      label: 'Person B — at registration',
+      start: ['Are you going to the festival?', 'I\'m (name), by the way.'],
+      keep: ['What about you?', 'And you?', 'How about you?'],
+      end: ['OK, nice to meet you', 'Have fun. / Have a good time.']
+    }
+  },
+  '4': {
+    title: 'Scenario 4 — Neighbourhood park',
+    image: 'Scenario4.png',
+    situation: 'You are at a neighbourhood park. [A] is walking a dog, and [B] is a new neighbour who just moved in next door.',
+    roleA: {
+      label: 'Person A — walking the dog',
+      start: ['How long have you had your dog?', 'It\'s a lovely day, isn\'t it?'],
+      keep: ['Be my guest', 'Not at all', 'No problem'],
+      end: ['OK, nice to meet you', 'See you later']
+    },
+    roleB: {
+      label: 'Person B — new neighbour',
+      start: ['I\'m (name), by the way.', 'Excuse me, do you know if there\'s a café near here?'],
+      keep: ['And you?', 'What about you?', 'How about you?'],
+      end: ['(Great/Nice) talking to you', 'Have fun. / Have a good time.']
+    }
+  },
+  '5': {
+    title: 'Scenario 5 — Sports pub',
+    image: 'Scenario5.png',
+    situation: 'You are both at a sports pub. A major football match just ended, and you are both standing near the exit.',
+    roleA: {
+      label: 'Person A — near the exit',
+      start: ['Did you watch the match?', 'Did you hear about the accident?'],
+      keep: ['No problem', 'Help yourself', 'Go ahead'],
+      end: ['That\'s my bus!', 'I\'ve got to go.']
+    },
+    roleB: {
+      label: 'Person B — near the exit',
+      start: ['Is this your first time here?', 'Are you going to the festival?'],
+      keep: ['And you?', 'How about you?', 'What about you?'],
+      end: ['See you later', '(Great/Nice) talking to you']
+    }
+  }
+};
+
+const COLORS=[['#BFDBFE','#1D4ED8'],['#EDE9FE','#6D28D9'],['#DCFCE7','#15803D'],['#FEF3C7','#92400E'],['#FCE7F3','#9D174D'],['#D1FAE5','#065F46']];
+const S={nick:'',uid:'',lobbyId:'',isHost:false,timerInterval:null,timerVal:90,myRole:'A'};
+
+function uid(){return Math.random().toString(36).slice(2,9);}
+function avatar(nick,i){const c=COLORS[i%COLORS.length];return `<div class="avatar" style="background:${c[0]};color:${c[1]};">${nick.slice(0,2).toUpperCase()}</div>`;}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
+
+function roleCardHTML(role, nick, scenarioId) {
+  const sc = SCENARIOS[scenarioId];
+  const r = role==='A' ? sc.roleA : sc.roleB;
+  const cls = role==='A' ? 'a' : 'b';
+  const situationWithName = sc.situation.replace('[A]', nick||'Person A').replace('[B]', nick||'Person B');
+  return `<div class="role-card ${cls}">
+    <div class="role-label">${r.label}</div>
+    <div class="phrase-section">
+      <div class="phrase-cat">Start a conversation</div>
+      <div class="phrase-list">${r.start.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div>
+    </div>
+    <div class="phrase-section">
+      <div class="phrase-cat">Keep it going</div>
+      <div class="phrase-list">${r.keep.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div>
+    </div>
+    <div class="phrase-section">
+      <div class="phrase-cat">End the conversation</div>
+      <div class="phrase-list">${r.end.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div>
+    </div>
+  </div>`;
+}
+
+window.goTo=function(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  if(id==='s-lobbies')loadLobbies();
+  if(id==='s-solo')renderSolo();
+};
+
+window.submitNick=function(){
+  const n=document.getElementById('nick-input').value.trim();
+  if(!n)return;
+  S.nick=n;S.uid=uid();
+  document.getElementById('menu-hello').textContent='Hello, '+n+'!';
+  goTo('s-menu');
+};
+
+window.randomTopic=function(){
+  const s=document.getElementById('topic-select');
+  s.selectedIndex=Math.floor(Math.random()*s.options.length);
+};
+
+window.renderSolo=function(){
+  const id=document.getElementById('solo-scenario-select').value;
+  const sc=SCENARIOS[id];
+  document.getElementById('solo-content').innerHTML=`
+    <img class="situation-img" src="${sc.image}" alt="scenario" onerror="this.style.display='none'">
+    <div class="situation-title">${sc.title}</div>
+    <div class="situation-body">${sc.situation}</div>
+    ${roleCardHTML('A','You',id)}
+    ${roleCardHTML('B','Partner',id)}
+  `;
+};
+
+window.createLobby=async function(){
+  const name=document.getElementById('lobby-name-input').value.trim()||'My Lobby';
+  const scenarioId=document.getElementById('topic-select').value;
+  const sc=SCENARIOS[scenarioId];
+  const r=push(ref(db,'lobbies'));
+  S.lobbyId=r.key;S.isHost=true;
+  await set(r,{name,scenarioId,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,status:'waiting',createdAt:Date.now()});
+  await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,isHost:true});
+  document.getElementById('host-lobby-name').textContent=name;
+  document.getElementById('host-topic-label').textContent=sc.title;
+  goTo('s-host');
+  onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>renderHostPlayers(snap.val()||{}));
+  onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{if(snap.val()==='playing')enterGame();});
+};
+
+function renderHostPlayers(players){
+  const ids=Object.keys(players);
+  document.getElementById('host-player-count').textContent=ids.length;
+  document.getElementById('odd-warn').classList.toggle('show',ids.length%2!==0&&ids.length>1);
+  document.getElementById('host-player-list').innerHTML=ids.map((id,i)=>{
+    const p=players[id];
+    return `<div class="player-row">${avatar(p.nick,i)}<div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}${(!p.isHost&&id!==S.uid)?`<button class="kick-btn" onclick="kickPlayer('${id}')">✕</button>`:''}</div>`;
+  }).join('')||'<p style="color:var(--text3);font-size:13px;padding:8px 0;">No players yet…</p>';
+}
+
+window.kickPlayer=async function(id){await remove(ref(db,`lobbies/${S.lobbyId}/players/${id}`));toast('Player removed');};
+window.hostLeave=async function(){if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}`));S.lobbyId='';S.isHost=false;goTo('s-menu');};
+
+window.startGame=async function(){
+  const snap=await get(ref(db,`lobbies/${S.lobbyId}/players`));
+  const ids=Object.keys(snap.val()||{});
+  if(ids.length<2||ids.length%2!==0){document.getElementById('odd-warn').classList.add('show');return;}
+  const shuffled=[...ids].sort(()=>Math.random()-0.5);
+  for(let i=0;i<shuffled.length;i+=2){
+    const roomId='room_'+(i/2+1);
+    await set(ref(db,`lobbies/${S.lobbyId}/rooms/${roomId}`),{playerA:shuffled[i],playerB:shuffled[i+1],round:1,timerStart:Date.now()});
+    await update(ref(db,`lobbies/${S.lobbyId}/players/${shuffled[i]}`),{room:roomId,role:'A'});
+    await update(ref(db,`lobbies/${S.lobbyId}/players/${shuffled[i+1]}`),{room:roomId,role:'B'});
+  }
+  await update(ref(db,`lobbies/${S.lobbyId}`),{status:'playing'});
+};
+
+async function enterGame(){
+  const snap=await get(ref(db,`lobbies/${S.lobbyId}`));
+  const lobby=snap.val();if(!lobby)return;
+  const me=lobby.players?.[S.uid];if(!me)return;
+  S.myRole=me.role||'A';
+  const scenarioId=lobby.scenarioId||'1';
+  const sc=SCENARIOS[scenarioId];
+  const roomId=me.room||'room_1';
+
+  document.getElementById('game-room-label').textContent=roomId.replace('_',' ');
+  document.getElementById('game-img').src=sc.image;
+  document.getElementById('game-topic').textContent=sc.title;
+  document.getElementById('game-situation').textContent=sc.situation.replace('[A]',lobby.hostNick||'Person A').replace('[B]','Partner');
+  document.getElementById('game-role-card').innerHTML=roleCardHTML(S.myRole,S.nick,scenarioId);
+  document.getElementById('host-end-btn').style.display=S.isHost?'block':'none';
+  goTo('s-game');
+  startTimer();
+
+  let lastRound=1;
+  onValue(ref(db,`lobbies/${S.lobbyId}/rooms/${roomId}`),async snap=>{
+    const room=snap.val();if(!room||room.round<=lastRound)return;
+    lastRound=room.round;
+    const meSnap=await get(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
+    S.myRole=meSnap.val()?.role||'A';
+    const banner=document.getElementById('role-swap-banner');
+    banner.classList.add('show');
+    const [a,b]=await Promise.all([
+      get(ref(db,`lobbies/${S.lobbyId}/players/${room.playerA}`)),
+      get(ref(db,`lobbies/${S.lobbyId}/players/${room.playerB}`))
+    ]);
+    document.getElementById('role-swap-text').textContent=`${a.val()?.nick||'Person A'} is now Person A · ${b.val()?.nick||'Person B'} is now Person B`;
+    setTimeout(()=>{
+      banner.classList.remove('show');
+      document.getElementById('game-role-card').innerHTML=roleCardHTML(S.myRole,S.nick,scenarioId);
+      S.timerVal=90;startTimer();
+    },10000);
+  });
+}
+
+function startTimer(){
+  clearInterval(S.timerInterval);S.timerVal=90;tick();
+  S.timerInterval=setInterval(()=>{S.timerVal--;tick();if(S.timerVal<=0){clearInterval(S.timerInterval);if(S.isHost)hostEndRound();}},1000);
+}
+function tick(){
+  const m=Math.floor(S.timerVal/60),s=S.timerVal%60;
+  document.getElementById('timer-num').textContent=m+':'+(s<10?'0':'')+s;
+  const w=S.timerVal<=10;
+  document.getElementById('timer-ring').classList.toggle('warn',w);
+  document.getElementById('timer-lbl').textContent=w?'Finishing soon! ⚠️':'Time remaining';
+}
+
+window.hostEndRound=async function(){
+  clearInterval(S.timerInterval);
+  const snap=await get(ref(db,`lobbies/${S.lobbyId}`));
+  const lobby=snap.val();if(!lobby)return;
+  for(const roomId of Object.keys(lobby.rooms||{})){
+    const room=lobby.rooms[roomId];
+    await update(ref(db,`lobbies/${S.lobbyId}/players/${room.playerA}`),{role:'B'});
+    await update(ref(db,`lobbies/${S.lobbyId}/players/${room.playerB}`),{role:'A'});
+    await update(ref(db,`lobbies/${S.lobbyId}/rooms/${roomId}`),{round:(room.round||1)+1,swappedAt:Date.now()});
+  }
+};
+
+function loadLobbies(){
+  onValue(ref(db,'lobbies'),snap=>{
+    const lobbies=snap.val()||{};
+    const waiting=Object.entries(lobbies).filter(([,l])=>l.status==='waiting');
+    document.getElementById('lobby-list').innerHTML=waiting.length
+      ?waiting.map(([id,l])=>`<div class="lobby-row" onclick="joinLobby('${id}')"><div style="flex:1;"><div class="lobby-name">${l.name}</div><div class="lobby-meta">${l.scenarioTitle||'Scenario'}</div></div><div class="lobby-count">${Object.keys(l.players||{}).length} players</div></div>`).join('')
+      :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet. Create one!</div></div>';
+  },{onlyOnce:true});
+}
+
+window.joinLobby=async function(lobbyId){
+  S.lobbyId=lobbyId;S.isHost=false;
+  await set(ref(db,`lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,isHost:false});
+  const snap=await get(ref(db,`lobbies/${lobbyId}`));
+  const lobby=snap.val();if(!lobby)return;
+  document.getElementById('joined-lobby-label').textContent=lobby.name;
+  document.getElementById('joined-topic').textContent=lobby.scenarioTitle||'Scenario';
+  goTo('s-joined');
+  onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>{
+    document.getElementById('joined-players').innerHTML=Object.entries(snap.val()||{}).map(([id,p],i)=>`<div class="player-row">${avatar(p.nick,i)}<div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}</div>`).join('');
+  });
+  onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{if(snap.val()==='playing')enterGame();});
+};
+
+window.leaveLobby=async function(){
+  if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
+  S.lobbyId='';goTo('s-menu');
+};
+</script>
 </body>
 </html>
