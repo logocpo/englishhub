@@ -44,6 +44,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 .btn.danger{background:var(--red);border-color:var(--red);color:white;justify-content:center;padding:10px;}
 .btn.warning{background:var(--amber);border-color:var(--amber);color:white;justify-content:center;padding:10px;}
 .btn.info{background:var(--brand);border-color:var(--brand);color:white;justify-content:center;padding:10px;}
+.btn.ghost{background:var(--bg2);border-color:var(--border2);color:var(--text2);justify-content:center;padding:10px;}
 .btn-icon{width:36px;height:36px;border-radius:9px;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:18px;}
 .btn-text{flex:1;}
 .btn-title{font-size:14px;font-weight:800;}
@@ -55,6 +56,24 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 .card-sub{font-size:13px;color:var(--text2);}
 .divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
 
+/* Avatar picker */
+.avatar-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;}
+.avatar-option{aspect-ratio:1;border-radius:var(--rl);border:2.5px solid var(--border2);background:var(--bg);cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;transition:all 0.15s;padding:8px;}
+.avatar-option:hover{border-color:var(--brand);background:var(--brand-light);}
+.avatar-option.selected{border-color:var(--brand);background:var(--brand-light);box-shadow:0 0 0 3px rgba(37,99,235,0.2);}
+.avatar-option .av-emoji{font-size:32px;}
+.avatar-option .av-name{font-size:10px;font-weight:800;color:var(--text2);}
+
+/* Player chips in game */
+.players-bar{display:flex;gap:10px;margin-bottom:16px;}
+.player-chip{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;background:var(--bg);border:2px solid var(--border);border-radius:var(--rl);padding:12px 8px;}
+.player-chip.me{border-color:var(--brand);background:var(--brand-light);}
+.player-chip.partner{border-color:var(--purple);background:var(--purple-light);}
+.player-chip-avatar{width:52px;height:52px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;flex-shrink:0;}
+.player-chip-name{font-size:13px;font-weight:900;color:var(--text1);text-align:center;}
+.player-chip-you{font-size:10px;font-weight:700;color:var(--text3);}
+
+/* Lobby list */
 .lobby-row{background:var(--bg);border-radius:var(--r);border:1px solid var(--border);padding:13px 15px;margin-bottom:8px;display:flex;align-items:center;gap:10px;cursor:pointer;transition:all 0.15s;box-shadow:var(--shadow);}
 .lobby-row:hover{border-color:var(--brand);}
 .lobby-name{font-size:14px;font-weight:800;color:var(--text1);}
@@ -63,7 +82,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 .player-row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
 .player-row:last-child{border-bottom:none;}
-.avatar{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:900;flex-shrink:0;}
+.avatar-sm{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;background:var(--bg2);}
 .player-name-text{font-size:14px;font-weight:700;color:var(--text1);flex:1;}
 .tag{font-size:10px;font-weight:800;padding:3px 8px;border-radius:99px;}
 .tag-host{background:var(--amber-light);color:#92400E;}
@@ -74,53 +93,50 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 .warn-box.show{display:block;}
 .status-box{background:var(--brand-light);border:1px solid var(--brand-mid);border-radius:var(--r);padding:11px 14px;font-size:13px;font-weight:700;color:var(--brand-dark);margin-bottom:12px;text-align:center;}
 
-.players-bar{display:flex;gap:8px;margin-bottom:14px;}
-.player-chip{flex:1;display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:8px 12px;}
-.player-chip.me{border-color:var(--brand);background:var(--brand-light);}
-.player-chip.partner{border-color:var(--purple);background:var(--purple-light);}
-.player-chip-avatar{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:900;flex-shrink:0;}
-.player-chip-name{font-size:12px;font-weight:800;color:var(--text1);}
-.player-chip-role{font-size:10px;color:var(--text2);font-weight:600;}
+/* Gameplay — bigger text */
+.situation-img{width:100%;border-radius:var(--r);border:1px solid var(--border);margin-bottom:16px;display:block;object-fit:cover;aspect-ratio:16/9;background:var(--bg2);}
+.situation-title{font-size:18px;font-weight:900;color:var(--text1);margin-bottom:8px;}
+.situation-body{font-size:15px;color:var(--text2);line-height:1.8;margin-bottom:10px;background:var(--bg2);border-radius:var(--r);padding:14px;}
+.nick-a{font-weight:900;color:var(--brand);background:var(--brand-light);padding:2px 7px;border-radius:4px;}
+.nick-b{font-weight:900;color:var(--purple);background:var(--purple-light);padding:2px 7px;border-radius:4px;}
+.phrases-hint{font-size:12px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;text-align:left;}
 
-.situation-img{width:100%;border-radius:var(--r);border:1px solid var(--border);margin-bottom:14px;display:block;object-fit:cover;aspect-ratio:16/9;background:var(--bg2);}
-.situation-title{font-size:15px;font-weight:800;color:var(--text1);margin-bottom:6px;}
-.situation-body{font-size:13px;color:var(--text2);line-height:1.7;margin-bottom:10px;background:var(--bg2);border-radius:var(--r);padding:12px;}
-.nick-a{font-weight:900;color:var(--brand);background:var(--brand-light);padding:1px 6px;border-radius:4px;}
-.nick-b{font-weight:900;color:var(--purple);background:var(--purple-light);padding:1px 6px;border-radius:4px;}
-
-.phrases-hint{font-size:11px;font-weight:800;color:var(--text3);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;text-align:left;}
-
-.role-card{border-radius:var(--r);border:2px solid;padding:14px;margin-bottom:10px;}
+.role-card{border-radius:var(--r);border:2px solid;padding:16px;margin-bottom:10px;}
 .role-card.a{border-color:var(--brand);background:var(--brand-light);}
 .role-card.b{border-color:var(--purple);background:var(--purple-light);}
-.role-label{font-size:11px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px;}
+.role-label{font-size:13px;font-weight:900;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:12px;}
 .role-card.a .role-label{color:var(--brand-dark);}
 .role-card.b .role-label{color:var(--purple);}
-.phrase-section{margin-bottom:8px;}
-.phrase-cat{font-size:10px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:4px;}
-.phrase-list{display:flex;flex-wrap:wrap;gap:6px;}
-.phrase-pill{background:white;border:1px solid var(--border2);border-radius:99px;padding:5px 11px;font-size:12px;font-weight:700;}
+.phrase-section{margin-bottom:10px;}
+.phrase-cat{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:0.5px;color:var(--text3);margin-bottom:6px;}
+.phrase-list{display:flex;flex-wrap:wrap;gap:7px;}
+.phrase-pill{background:white;border:1px solid var(--border2);border-radius:99px;padding:7px 14px;font-size:13px;font-weight:700;}
 .role-card.a .phrase-pill{border-color:rgba(37,99,235,0.3);color:var(--brand-dark);}
 .role-card.b .phrase-pill{border-color:rgba(124,58,237,0.3);color:var(--purple);}
 
-.timer-wrap{text-align:center;margin:14px 0;}
-.timer-ring{width:80px;height:80px;border-radius:50%;border:4px solid var(--brand);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 6px;transition:border-color 0.3s;}
+.timer-wrap{text-align:center;margin:16px 0;}
+.timer-ring{width:90px;height:90px;border-radius:50%;border:4px solid var(--brand);display:flex;flex-direction:column;align-items:center;justify-content:center;margin:0 auto 8px;transition:border-color 0.3s;}
 .timer-ring.warn{border-color:var(--red);}
-.timer-num{font-size:22px;font-weight:900;color:var(--brand);}
+.timer-num{font-size:26px;font-weight:900;color:var(--brand);}
 .timer-ring.warn .timer-num{color:var(--red);}
-.timer-lbl{font-size:11px;color:var(--text2);font-weight:700;}
+.timer-lbl{font-size:12px;color:var(--text2);font-weight:700;}
 
 .role-swap{background:var(--green-light);border:1px solid #86EFAC;border-radius:var(--r);padding:14px;text-align:center;margin-bottom:14px;display:none;}
 .role-swap.show{display:block;}
-.role-swap-title{font-size:14px;font-weight:900;color:#15803D;margin-bottom:4px;}
+.role-swap-title{font-size:15px;font-weight:900;color:#15803D;margin-bottom:4px;}
 .role-swap-sub{font-size:13px;color:#166534;}
 
 .host-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;}
 .host-btns .btn{margin-bottom:0;}
-.host-btn-full{margin-bottom:8px;}
 
-.quit-btn{width:100%;margin-top:4px;padding:10px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--text2);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
+.quit-btn{width:100%;margin-top:6px;padding:11px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);color:var(--text2);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;}
 .quit-btn:hover{background:var(--red-light);color:var(--red);border-color:var(--red);}
+
+/* Host lobby bottom controls */
+.host-lobby-controls{background:var(--bg);border-radius:var(--rl);border:1px solid var(--border);padding:16px;margin-top:12px;box-shadow:var(--shadow);}
+.host-lobby-controls .label{margin-top:10px;}
+.host-lobby-controls .label:first-child{margin-top:0;}
+.host-lobby-controls select{margin-bottom:8px;}
 
 .empty{text-align:center;padding:32px 20px;color:var(--text3);}
 .empty-icon{font-size:36px;margin-bottom:10px;}
@@ -130,11 +146,18 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 .topic-row{display:flex;gap:8px;margin-bottom:14px;}
 .topic-row select{flex:1;margin-bottom:0;}
 .rand-btn{padding:0 14px;border-radius:var(--r);border:1.5px solid var(--border2);background:var(--bg);font-family:'Nunito',sans-serif;font-size:13px;font-weight:700;cursor:pointer;white-space:nowrap;color:var(--text1);}
+
+/* Menu user chip */
+.user-chip{display:flex;align-items:center;gap:10px;background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:10px 14px;margin-bottom:20px;cursor:pointer;transition:all 0.15s;}
+.user-chip:hover{border-color:var(--brand);}
+.user-chip-avatar{font-size:28px;}
+.user-chip-name{font-size:15px;font-weight:800;color:var(--text1);flex:1;}
+.user-chip-edit{font-size:12px;color:var(--brand);font-weight:700;}
 </style>
 </head>
 <body>
 
-<!-- NICKNAME -->
+<!-- NICKNAME + AVATAR -->
 <div id="s-nick" class="screen active">
   <div class="app-header">
     <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
@@ -144,6 +167,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <p class="sub">Enter your nickname to start practicing English with your classmates.</p>
   <div class="label">Your nickname</div>
   <input type="text" id="nick-input" placeholder="e.g. Asel, Dima, Zarina…" maxlength="20" autocomplete="off">
+  <div class="label">Choose your character</div>
+  <div class="avatar-grid" id="avatar-grid"></div>
   <button class="btn primary" onclick="submitNick()">Continue →</button>
 </div>
 
@@ -151,7 +176,12 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 <div id="s-menu" class="screen">
   <div class="app-header">
     <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="menu-hello">Hello!</div></div>
+    <div><div class="app-name">EnglishHub</div></div>
+  </div>
+  <div class="user-chip" onclick="goTo('s-nick')">
+    <div class="user-chip-avatar" id="menu-avatar">🧑</div>
+    <div class="user-chip-name" id="menu-name">—</div>
+    <div class="user-chip-edit">Change ›</div>
   </div>
   <h2>Small Talk</h2>
   <p class="sub">How do you want to practice today?</p>
@@ -211,12 +241,12 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <div class="label">Lobby name</div>
   <input type="text" id="lobby-name-input" placeholder="e.g. Morning Practice" maxlength="30">
   <div class="label">English level</div>
-  <select id="level-select" onchange="updateTopics()">
+  <select id="level-select">
     <option value="B1">B1 — Intermediate</option>
     <option value="B2">B2 — Upper Intermediate</option>
   </select>
   <div class="label">Topic</div>
-  <select id="topic-select" onchange="updateScenarios()">
+  <select id="topic-select">
     <option value="conversation">How to start and end a conversation</option>
   </select>
   <div class="label">Scenario</div>
@@ -237,12 +267,22 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <div class="card">
     <div class="label">Lobby</div>
     <div class="card-title" id="host-lobby-name">—</div>
-    <div class="label" style="margin-top:10px;">Scenario</div>
+    <div class="label" style="margin-top:10px;">Current scenario</div>
     <div class="card-sub" id="host-topic-label">—</div>
   </div>
   <div class="label">Players (<span id="host-player-count">0</span>)</div>
   <div class="card" style="padding:10px 16px;"><div id="host-player-list"></div></div>
   <div class="warn-box" id="odd-warn">⚠️ You need an even number of players to start.</div>
+
+  <!-- Host can change scenario before/after game -->
+  <div class="host-lobby-controls">
+    <div class="label">Change scenario</div>
+    <select id="host-scenario-select" style="margin-bottom:8px;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.15);background:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;"></select>
+    <div style="display:flex;gap:8px;">
+      <button class="rand-btn" style="flex:1;padding:10px;" onclick="randomHostScenario()">🎲 Random scenario</button>
+    </div>
+  </div>
+  <div style="height:12px;"></div>
   <button class="btn success" onclick="startGame()">Start game →</button>
 </div>
 
@@ -268,7 +308,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 <div id="s-game" class="screen">
   <div class="app-header">
     <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="game-room-label">Room 1</div></div>
+    <div><div class="app-name">EnglishHub</div><div class="app-tagline" id="game-lobby-label">Lobby</div></div>
   </div>
 
   <div class="role-swap" id="role-swap-banner">
@@ -293,7 +333,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
       <button class="btn danger" onclick="hostEndConversation()">End conversation</button>
       <button class="btn warning" onclick="hostChangeRoles()">Change roles</button>
     </div>
-    <button class="btn info host-btn-full" onclick="hostNextScenario()">Next conversation →</button>
+    <button class="btn info" style="margin-bottom:8px;" onclick="hostNextScenario()">Next conversation →</button>
   </div>
 
   <button class="quit-btn" id="quit-btn" onclick="quitGame()">Leave conversation</button>
@@ -318,91 +358,100 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
+// ── Avatars ──────────────────────────────────────────────
+const AVATARS = [
+  {emoji:'🦁', name:'Lion'},
+  {emoji:'🐯', name:'Tiger'},
+  {emoji:'🦊', name:'Fox'},
+  {emoji:'🐺', name:'Wolf'},
+  {emoji:'🦅', name:'Eagle'},
+  {emoji:'🐉', name:'Dragon'},
+  {emoji:'🦄', name:'Unicorn'},
+  {emoji:'🤖', name:'Robot'},
+  {emoji:'🧙', name:'Wizard'},
+  {emoji:'🦸', name:'Hero'},
+  {emoji:'🕵️', name:'Detective'},
+  {emoji:'🧑‍🚀', name:'Astronaut'},
+];
+
 // ── Scenarios ────────────────────────────────────────────
-const SCENARIO_IDS = ['1','2','3','4','5'];
-const SCENARIOS = {
-  '1': {
-    title: 'Scenario 1 — Local café', image: 'Scenario1.png',
-    situation: '[A] is sitting at a small table with a laptop at a busy local café, and [B] is looking for a place to sit and a power outlet to charge their phone.',
-    roleA: { label: 'Person A — at the table with laptop', start: ["I'm (name), by the way."], keep: ['No problem','Go ahead','Not at all'], end: ['(Great/Nice) talking to you','Have fun. / Have a good time.'] },
-    roleB: { label: 'Person B — looking for a seat', start: ['Excuse me, is anyone sitting here?','Do you mind if I charge my phone here?'], keep: ['What about you?','How about you?','And you?'], end: ['OK, nice to meet you',"I've got to go."] }
-  },
-  '2': {
-    title: 'Scenario 2 — Office kitchen', image: 'Scenario2.png',
-    situation: "[A] and [B] are colleagues who haven't seen each other since the weekend. They meet in the office kitchen on Monday morning while the coffee machine is running.",
-    roleA: { label: 'Person A — colleague', start: ["It's a lovely morning, isn't it?",'How was your weekend?'], keep: ['Help yourself','Be my guest','No problem'], end: ["I've got to go","That's my bus!"] },
-    roleB: { label: 'Person B — colleague', start: ['Did you hear about the accident?','Are you doing anything nice at the weekend?'], keep: ['What about you?','How about you?','And you?'], end: ['See you later','(Great/Nice) talking to you'] }
-  },
-  '3': {
-    title: 'Scenario 3 — Tech meetup', image: 'Scenario3.png',
-    situation: '[A] and [B] are both attending a large tech community meetup for the first time. They are standing in line at the registration desk.',
-    roleA: { label: 'Person A — at registration', start: ['Is this your first time here?',"Excuse me, do you know if there's wifi?"], keep: ['No problem','Go ahead','Help yourself'], end: ['(Great/Nice) talking to you','See you later'] },
-    roleB: { label: 'Person B — at registration', start: ['Are you going to the festival?',"I'm (name), by the way."], keep: ['What about you?','And you?','How about you?'], end: ['OK, nice to meet you','Have fun. / Have a good time.'] }
-  },
-  '4': {
-    title: 'Scenario 4 — Neighbourhood park', image: 'Scenario4.png',
-    situation: '[A] is walking a dog at a neighbourhood park, and [B] is a new neighbour who just moved in next door.',
-    roleA: { label: 'Person A — walking the dog', start: ['How long have you had your dog?',"It's a lovely day, isn't it?"], keep: ['Be my guest','Not at all','No problem'], end: ['OK, nice to meet you','See you later'] },
-    roleB: { label: 'Person B — new neighbour', start: ["I'm (name), by the way.",'Excuse me, do you know if there\'s a café near here?'], keep: ['And you?','What about you?','How about you?'], end: ['(Great/Nice) talking to you','Have fun. / Have a good time.'] }
-  },
-  '5': {
-    title: 'Scenario 5 — Sports pub', image: 'Scenario5.png',
-    situation: '[A] and [B] are both at a sports pub. A major football match just ended, and they are both standing near the exit.',
-    roleA: { label: 'Person A — near the exit', start: ['Did you watch the match?','Did you hear about the accident?'], keep: ['No problem','Help yourself','Go ahead'], end: ["That's my bus!","I've got to go."] },
-    roleB: { label: 'Person B — near the exit', start: ['Is this your first time here?','Are you going to the festival?'], keep: ['And you?','How about you?','What about you?'], end: ['See you later','(Great/Nice) talking to you'] }
-  }
+const SCENARIO_IDS=['1','2','3','4','5'];
+const SCENARIOS={
+  '1':{title:'Scenario 1 — Local café',image:'Scenario1.png',situation:'[A] is sitting at a small table with a laptop at a busy local café, and [B] is looking for a place to sit and a power outlet to charge their phone.',roleA:{label:'Person A — at the table with laptop',start:["I'm (name), by the way."],keep:['No problem','Go ahead','Not at all'],end:['(Great/Nice) talking to you','Have fun. / Have a good time.']},roleB:{label:'Person B — looking for a seat',start:['Excuse me, is anyone sitting here?','Do you mind if I charge my phone here?'],keep:['What about you?','How about you?','And you?'],end:['OK, nice to meet you',"I've got to go."]}},
+  '2':{title:'Scenario 2 — Office kitchen',image:'Scenario2.png',situation:"[A] and [B] are colleagues who haven't seen each other since the weekend. They meet in the office kitchen on Monday morning while the coffee machine is running.",roleA:{label:'Person A — colleague',start:["It's a lovely morning, isn't it?",'How was your weekend?'],keep:['Help yourself','Be my guest','No problem'],end:["I've got to go","That's my bus!"]},roleB:{label:'Person B — colleague',start:['Did you hear about the accident?','Are you doing anything nice at the weekend?'],keep:['What about you?','How about you?','And you?'],end:['See you later','(Great/Nice) talking to you']}},
+  '3':{title:'Scenario 3 — Tech meetup',image:'Scenario3.png',situation:'[A] and [B] are both attending a large tech community meetup for the first time. They are standing in line at the registration desk.',roleA:{label:'Person A — at registration',start:['Is this your first time here?',"Excuse me, do you know if there's wifi?"],keep:['No problem','Go ahead','Help yourself'],end:['(Great/Nice) talking to you','See you later']},roleB:{label:'Person B — at registration',start:['Are you going to the festival?',"I'm (name), by the way."],keep:['What about you?','And you?','How about you?'],end:['OK, nice to meet you','Have fun. / Have a good time.']}},
+  '4':{title:'Scenario 4 — Neighbourhood park',image:'Scenario4.png',situation:'[A] is walking a dog at a neighbourhood park, and [B] is a new neighbour who just moved in next door.',roleA:{label:'Person A — walking the dog',start:['How long have you had your dog?',"It's a lovely day, isn't it?"],keep:['Be my guest','Not at all','No problem'],end:['OK, nice to meet you','See you later']},roleB:{label:'Person B — new neighbour',start:["I'm (name), by the way.",'Excuse me, do you know if there\'s a café near here?'],keep:['And you?','What about you?','How about you?'],end:['(Great/Nice) talking to you','Have fun. / Have a good time.']}},
+  '5':{title:'Scenario 5 — Sports pub',image:'Scenario5.png',situation:'[A] and [B] are both at a sports pub. A major football match just ended, and they are both standing near the exit.',roleA:{label:'Person A — near the exit',start:['Did you watch the match?','Did you hear about the accident?'],keep:['No problem','Help yourself','Go ahead'],end:["That's my bus!","I've got to go."]},roleB:{label:'Person B — near the exit',start:['Is this your first time here?','Are you going to the festival?'],keep:['And you?','How about you?','What about you?'],end:['See you later','(Great/Nice) talking to you']}}
 };
 
-const COLORS=[['#BFDBFE','#1D4ED8'],['#EDE9FE','#6D28D9'],['#DCFCE7','#15803D'],['#FEF3C7','#92400E'],['#FCE7F3','#9D174D'],['#D1FAE5','#065F46']];
-const S={nick:'',uid:'',lobbyId:'',isHost:false,timerInterval:null,timerVal:90,myRole:'A',partnerNick:'',scenarioId:'1',roomId:'',round:1,rolesSwapped:false};
+// ── State ─────────────────────────────────────────────────
+const S={nick:'',uid:'',avatar:'🦁',lobbyId:'',lobbyName:'',isHost:false,timerInterval:null,timerVal:90,myRole:'A',partnerNick:'',partnerAvatar:'🐯',scenarioId:'1',roomId:'',rolesSwapped:false};
+let selectedAvatarIdx=0;
+let roomListenerOff=null;
 
 function uid(){return Math.random().toString(36).slice(2,9);}
-function avatar(nick,i){const c=COLORS[i%COLORS.length];return `<div class="avatar" style="background:${c[0]};color:${c[1]};">${nick.slice(0,2).toUpperCase()}</div>`;}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-
-function situationHTML(text,nickA,nickB){
-  return text.replace('[A]',`<span class="nick-a">${nickA}</span>`).replace('[B]',`<span class="nick-b">${nickB}</span>`);
-}
+function situationHTML(text,nickA,nickB){return text.replace('[A]',`<span class="nick-a">${nickA}</span>`).replace('[B]',`<span class="nick-b">${nickB}</span>`);}
 
 function roleCardHTML(role,scenarioId){
-  const sc=SCENARIOS[scenarioId];
-  const r=role==='A'?sc.roleA:sc.roleB;
-  const cls=role==='A'?'a':'b';
-  return `<div class="role-card ${cls}">
-    <div class="role-label">${r.label}</div>
+  const sc=SCENARIOS[scenarioId];const r=role==='A'?sc.roleA:sc.roleB;const cls=role==='A'?'a':'b';
+  return `<div class="role-card ${cls}"><div class="role-label">${r.label}</div>
     <div class="phrase-section"><div class="phrase-cat">Start a conversation</div><div class="phrase-list">${r.start.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
     <div class="phrase-section"><div class="phrase-cat">Keep it going</div><div class="phrase-list">${r.keep.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
     <div class="phrase-section"><div class="phrase-cat">End the conversation</div><div class="phrase-list">${r.end.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
   </div>`;
 }
 
-// ── Navigation ────────────────────────────────────────────
+// ── Avatar picker init ─────────────────────────────────────
+function initAvatarGrid(){
+  const grid=document.getElementById('avatar-grid');
+  grid.innerHTML=AVATARS.map((a,i)=>`
+    <div class="avatar-option${i===0?' selected':''}" onclick="selectAvatar(${i})">
+      <div class="av-emoji">${a.emoji}</div>
+      <div class="av-name">${a.name}</div>
+    </div>`).join('');
+}
+window.selectAvatar=function(i){
+  document.querySelectorAll('.avatar-option').forEach((el,j)=>el.classList.toggle('selected',j===i));
+  selectedAvatarIdx=i;
+};
+initAvatarGrid();
+
+// ── Scenario selects ───────────────────────────────────────
+function populateScenarioSelect(selId){
+  const sel=document.getElementById(selId);
+  if(sel)sel.innerHTML=SCENARIO_IDS.map(id=>`<option value="${id}">${SCENARIOS[id].title}</option>`).join('');
+}
+populateScenarioSelect('scenario-select');
+populateScenarioSelect('host-scenario-select');
+window.randomScenario=function(){const s=document.getElementById('scenario-select');s.selectedIndex=Math.floor(Math.random()*s.options.length);};
+window.randomHostScenario=function(){
+  const s=document.getElementById('host-scenario-select');
+  s.selectedIndex=Math.floor(Math.random()*s.options.length);
+  const id=s.value;
+  update(ref(db,`lobbies/${S.lobbyId}`),{scenarioId:id,scenarioTitle:SCENARIOS[id].title});
+  document.getElementById('host-topic-label').textContent=SCENARIOS[id].title;
+  toast('Scenario updated!');
+};
+
+// ── Navigation ─────────────────────────────────────────────
 window.goTo=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
   if(id==='s-lobbies')loadLobbies();
   if(id==='s-solo')renderSolo();
-  if(id==='s-create')initCreateForm();
 };
 
+// ── Nickname submit ────────────────────────────────────────
 window.submitNick=function(){
   const n=document.getElementById('nick-input').value.trim();
   if(!n)return;
-  S.nick=n;S.uid=uid();
-  document.getElementById('menu-hello').textContent='Hello, '+n+'!';
+  S.nick=n;
+  S.avatar=AVATARS[selectedAvatarIdx].emoji;
+  if(!S.uid)S.uid=uid();
+  document.getElementById('menu-name').textContent=n;
+  document.getElementById('menu-avatar').textContent=S.avatar;
   goTo('s-menu');
-};
-
-// ── Create form ────────────────────────────────────────────
-function initCreateForm(){updateTopics();}
-window.updateTopics=function(){updateScenarios();};
-window.updateScenarios=function(){
-  const sel=document.getElementById('scenario-select');
-  sel.innerHTML=SCENARIO_IDS.map(id=>`<option value="${id}">${SCENARIOS[id].title}</option>`).join('');
-};
-window.randomScenario=function(){
-  const s=document.getElementById('scenario-select');
-  s.selectedIndex=Math.floor(Math.random()*s.options.length);
 };
 
 // ── Solo ────────────────────────────────────────────────────
@@ -417,7 +466,7 @@ window.renderSolo=function(){
     ${roleCardHTML('A',id)}${roleCardHTML('B',id)}`;
 };
 
-// ── Create lobby ────────────────────────────────────────────
+// ── Create lobby ───────────────────────────────────────────
 window.createLobby=async function(){
   const name=document.getElementById('lobby-name-input').value.trim()||'My Lobby';
   const level=document.getElementById('level-select').value;
@@ -425,19 +474,27 @@ window.createLobby=async function(){
   const scenarioId=document.getElementById('scenario-select').value;
   const sc=SCENARIOS[scenarioId];
   const r=push(ref(db,'lobbies'));
-  S.lobbyId=r.key;S.isHost=true;S.scenarioId=scenarioId;
+  S.lobbyId=r.key;S.isHost=true;S.scenarioId=scenarioId;S.lobbyName=name;
   await set(r,{name,level,topic,scenarioId,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,status:'waiting',createdAt:Date.now()});
-  await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,isHost:true});
+  await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
   document.getElementById('host-lobby-name').textContent=name;
   document.getElementById('host-topic-label').textContent=sc.title;
+  document.getElementById('host-scenario-select').value=scenarioId;
   goTo('s-host');
+  listenHostLobby();
+};
+
+function listenHostLobby(){
   onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>renderHostPlayers(snap.val()||{}));
   onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{
     const st=snap.val();
     if(st==='playing')enterGame();
-    if(st==='lobby')goToLobbyFromGame();
+    if(st==='lobby')returnToHostLobby();
   });
-};
+  onValue(ref(db,`lobbies/${S.lobbyId}/scenarioId`),snap=>{
+    if(snap.val()){S.scenarioId=snap.val();document.getElementById('host-topic-label').textContent=SCENARIOS[S.scenarioId].title;}
+  });
+}
 
 function renderHostPlayers(players){
   const ids=Object.keys(players);
@@ -445,15 +502,26 @@ function renderHostPlayers(players){
   document.getElementById('odd-warn').classList.toggle('show',ids.length%2!==0&&ids.length>1);
   document.getElementById('host-player-list').innerHTML=ids.map((id,i)=>{
     const p=players[id];
-    return `<div class="player-row">${avatar(p.nick,i)}<div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}${(!p.isHost&&id!==S.uid)?`<button class="kick-btn" onclick="kickPlayer('${id}')">✕</button>`:''}</div>`;
+    return `<div class="player-row"><div class="avatar-sm">${p.avatar||'🧑'}</div><div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}${(!p.isHost&&id!==S.uid)?`<button class="kick-btn" onclick="kickPlayer('${id}')">✕</button>`:''}</div>`;
   }).join('')||'<p style="color:var(--text3);font-size:13px;padding:8px 0;">No players yet…</p>';
 }
 
 window.kickPlayer=async function(id){await remove(ref(db,`lobbies/${S.lobbyId}/players/${id}`));toast('Player removed');};
 window.hostLeave=async function(){if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}`));S.lobbyId='';S.isHost=false;goTo('s-menu');};
 
+function returnToHostLobby(){
+  clearInterval(S.timerInterval);
+  if(roomListenerOff){roomListenerOff();roomListenerOff=null;}
+  goTo('s-host');
+}
+
 // ── Start game ─────────────────────────────────────────────
 window.startGame=async function(){
+  const scenarioId=document.getElementById('host-scenario-select').value||S.scenarioId;
+  S.scenarioId=scenarioId;
+  const sc=SCENARIOS[scenarioId];
+  await update(ref(db,`lobbies/${S.lobbyId}`),{scenarioId,scenarioTitle:sc.title});
+
   const snap=await get(ref(db,`lobbies/${S.lobbyId}/players`));
   const ids=Object.keys(snap.val()||{});
   if(ids.length<2||ids.length%2!==0){document.getElementById('odd-warn').classList.add('show');return;}
@@ -474,6 +542,7 @@ async function enterGame(){
   const me=lobby.players?.[S.uid];if(!me)return;
   S.myRole=me.role||'A';
   S.scenarioId=lobby.scenarioId||'1';
+  S.lobbyName=lobby.name||'Lobby';
   S.roomId=me.room||'room_1';
   S.rolesSwapped=false;
 
@@ -482,10 +551,12 @@ async function enterGame(){
   const partnerId=S.myRole==='A'?room.playerB:room.playerA;
   const partnerSnap=await get(ref(db,`lobbies/${S.lobbyId}/players/${partnerId}`));
   S.partnerNick=partnerSnap.val()?.nick||'Partner';
+  S.partnerAvatar=partnerSnap.val()?.avatar||'🧑';
 
-  renderGameUI();
+  document.getElementById('game-lobby-label').textContent=S.lobbyName;
   document.getElementById('host-controls').style.display=S.isHost?'block':'none';
   document.getElementById('quit-btn').style.display=S.isHost?'none':'block';
+  renderGameUI();
   goTo('s-game');
   startTimer(false);
   listenRoomChanges();
@@ -495,47 +566,40 @@ function renderGameUI(){
   const sc=SCENARIOS[S.scenarioId];
   const nickA=S.myRole==='A'?S.nick:S.partnerNick;
   const nickB=S.myRole==='A'?S.partnerNick:S.nick;
-  document.getElementById('game-room-label').textContent=S.roomId.replace('_',' ');
   document.getElementById('game-img').src=sc.image;
   document.getElementById('game-topic').textContent=sc.title;
   document.getElementById('game-situation').innerHTML=situationHTML(sc.situation,nickA,nickB);
   document.getElementById('game-role-card').innerHTML=roleCardHTML(S.myRole,S.scenarioId);
-  renderPlayersBar(nickA,nickB);
+  renderPlayersBar();
 }
 
-function renderPlayersBar(nickA,nickB){
+function renderPlayersBar(){
   const meIsA=S.myRole==='A';
-  const c0=COLORS[0],c1=COLORS[1];
   document.getElementById('players-bar').innerHTML=`
     <div class="player-chip me">
-      <div class="player-chip-avatar" style="background:${c0[0]};color:${c0[1]};">${S.nick.slice(0,2).toUpperCase()}</div>
-      <div><div class="player-chip-name">${S.nick} (you)</div><div class="player-chip-role">Person ${meIsA?'A':'B'}</div></div>
+      <div class="player-chip-avatar">${S.avatar}</div>
+      <div class="player-chip-name">${S.nick}</div>
+      <div class="player-chip-you">you · Person ${meIsA?'A':'B'}</div>
     </div>
     <div class="player-chip partner">
-      <div class="player-chip-avatar" style="background:${c1[0]};color:${c1[1]};">${S.partnerNick.slice(0,2).toUpperCase()}</div>
-      <div><div class="player-chip-name">${S.partnerNick}</div><div class="player-chip-role">Person ${meIsA?'B':'A'}</div></div>
+      <div class="player-chip-avatar">${S.partnerAvatar}</div>
+      <div class="player-chip-name">${S.partnerNick}</div>
+      <div class="player-chip-you">Person ${meIsA?'B':'A'}</div>
     </div>`;
 }
 
-// ── Timer ───────────────────────────────────────────────────
-function startTimer(afterRolesSwapped){
-  clearInterval(S.timerInterval);
-  S.timerVal=90;tick();
+// ── Timer ──────────────────────────────────────────────────
+function startTimer(afterSwap){
+  clearInterval(S.timerInterval);S.timerVal=90;tick();
   S.timerInterval=setInterval(()=>{
     S.timerVal--;tick();
     if(S.timerVal<=0){
       clearInterval(S.timerInterval);
-      if(S.isHost){
-        if(!afterRolesSwapped){
-          // First timeout → change roles
-          doSwapRoles();
-        }
-        // Second timeout → do nothing, wait for host action
-      }
+      if(S.isHost&&!afterSwap)doSwapRoles();
+      // After swap or non-host: stop, wait for host action
     }
   },1000);
 }
-
 function tick(){
   const m=Math.floor(S.timerVal/60),s=S.timerVal%60;
   document.getElementById('timer-num').textContent=m+':'+(s<10?'0':'')+s;
@@ -544,62 +608,50 @@ function tick(){
   document.getElementById('timer-lbl').textContent=w?'Finishing soon! ⚠️':'Time remaining';
 }
 
-// ── Room listener ───────────────────────────────────────────
-let roomListenerRef=null;
+// ── Room listener ──────────────────────────────────────────
 function listenRoomChanges(){
-  if(roomListenerRef)off(roomListenerRef);
-  roomListenerRef=ref(db,`lobbies/${S.lobbyId}/rooms/${S.roomId}`);
+  if(roomListenerOff)roomListenerOff();
+  const roomRef=ref(db,`lobbies/${S.lobbyId}/rooms/${S.roomId}`);
   let lastRound=1;
-  onValue(roomListenerRef,async snap=>{
-    const room=snap.val();if(!room)return;
-    if(room.round>lastRound){
-      lastRound=room.round;
-      const meSnap=await get(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
-      S.myRole=meSnap.val()?.role||'A';
-      const wasSwapped=room.rolesSwapped||false;
-      showRoleSwapBanner();
-      setTimeout(()=>{
-        document.getElementById('role-swap-banner').classList.remove('show');
-        renderGameUI();
-        startTimer(wasSwapped);
-      },10000);
-    }
+  const unsub=onValue(roomRef,async snap=>{
+    const room=snap.val();if(!room||room.round<=lastRound)return;
+    lastRound=room.round;
+    const wasSwapped=room.rolesSwapped||false;
+    const meSnap=await get(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
+    S.myRole=meSnap.val()?.role||'A';
+    const nickA=S.myRole==='A'?S.nick:S.partnerNick;
+    const nickB=S.myRole==='A'?S.partnerNick:S.nick;
+    const banner=document.getElementById('role-swap-banner');
+    banner.classList.add('show');
+    document.getElementById('role-swap-text').textContent=`${nickA} is now Person A · ${nickB} is now Person B`;
+    setTimeout(()=>{banner.classList.remove('show');renderGameUI();startTimer(wasSwapped);},10000);
   });
+  roomListenerOff=()=>off(roomRef);
 }
 
-function showRoleSwapBanner(){
-  const nickA=S.myRole==='A'?S.nick:S.partnerNick;
-  const nickB=S.myRole==='A'?S.partnerNick:S.nick;
-  const banner=document.getElementById('role-swap-banner');
-  banner.classList.add('show');
-  document.getElementById('role-swap-text').textContent=`${nickA} is now Person A · ${nickB} is now Person B`;
-}
-
-// ── Host actions ────────────────────────────────────────────
-async function doSwapRoles(){
+// ── Swap roles in Firebase ─────────────────────────────────
+async function doSwapRoles(isManual=false){
   const snap=await get(ref(db,`lobbies/${S.lobbyId}/rooms`));
   const rooms=snap.val();if(!rooms)return;
   for(const roomId of Object.keys(rooms)){
     const room=rooms[roomId];
     await update(ref(db,`lobbies/${S.lobbyId}/players/${room.playerA}`),{role:'B'});
     await update(ref(db,`lobbies/${S.lobbyId}/players/${room.playerB}`),{role:'A'});
-    await update(ref(db,`lobbies/${S.lobbyId}/rooms/${roomId}`),{round:(room.round||1)+1,rolesSwapped:true,swappedAt:Date.now()});
+    await update(ref(db,`lobbies/${S.lobbyId}/rooms/${roomId}`),{round:(room.round||1)+1,rolesSwapped:!isManual,swappedAt:Date.now()});
   }
 }
 
-// End conversation → go back to lobby
+// ── Host buttons ───────────────────────────────────────────
 window.hostEndConversation=async function(){
   clearInterval(S.timerInterval);
   await update(ref(db,`lobbies/${S.lobbyId}`),{status:'lobby'});
 };
 
-// Change roles immediately
 window.hostChangeRoles=async function(){
   clearInterval(S.timerInterval);
-  await doSwapRoles();
+  await doSwapRoles(true);
 };
 
-// Next scenario (loop 1→2→3→4→5→1)
 window.hostNextScenario=async function(){
   clearInterval(S.timerInterval);
   const currentIdx=SCENARIO_IDS.indexOf(S.scenarioId);
@@ -607,7 +659,6 @@ window.hostNextScenario=async function(){
   const sc=SCENARIOS[nextId];
   S.scenarioId=nextId;
 
-  // Re-shuffle rooms
   const snap=await get(ref(db,`lobbies/${S.lobbyId}/players`));
   const players=snap.val()||{};
   const ids=Object.keys(players);
@@ -623,31 +674,24 @@ window.hostNextScenario=async function(){
   await update(ref(db,`lobbies/${S.lobbyId}`),{scenarioId:nextId,scenarioTitle:sc.title,status:'playing'});
 };
 
-// Go back to lobby screen
-async function goToLobbyFromGame(){
-  clearInterval(S.timerInterval);
-  if(roomListenerRef)off(roomListenerRef);
-  if(S.isHost){
-    document.getElementById('host-lobby-name').textContent='—';
-    goTo('s-host');
-  } else {
-    goTo('s-joined');
-  }
-}
-
 window.quitGame=async function(){
   clearInterval(S.timerInterval);
+  if(roomListenerOff){roomListenerOff();roomListenerOff=null;}
   if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
   S.lobbyId='';goTo('s-menu');
 };
 
-// ── Lobby list ──────────────────────────────────────────────
+// ── Lobby list ─────────────────────────────────────────────
 function loadLobbies(){
   onValue(ref(db,'lobbies'),snap=>{
     const lobbies=snap.val()||{};
-    const waiting=Object.entries(lobbies).filter(([,l])=>l.hostId!==S.uid&&(l.status==='waiting'||l.status==='lobby'));
-    document.getElementById('lobby-list').innerHTML=waiting.length
-      ?waiting.map(([id,l])=>`<div class="lobby-row" onclick="joinLobby('${id}')">
+    // Show only lobbies with players, not owned by me, and in waiting/lobby state
+    const available=Object.entries(lobbies).filter(([,l])=>{
+      const players=Object.keys(l.players||{});
+      return players.length>0 && l.hostId!==S.uid && (l.status==='waiting'||l.status==='lobby');
+    });
+    document.getElementById('lobby-list').innerHTML=available.length
+      ?available.map(([id,l])=>`<div class="lobby-row" onclick="joinLobby('${id}')">
           <div style="flex:1;"><div class="lobby-name">${l.name}</div><div class="lobby-meta">${l.scenarioTitle||'Scenario'} · ${l.level||'B1'}</div></div>
           <div class="lobby-count">${Object.keys(l.players||{}).length} players</div>
         </div>`).join('')
@@ -657,22 +701,26 @@ function loadLobbies(){
 
 window.joinLobby=async function(lobbyId){
   S.lobbyId=lobbyId;S.isHost=false;
-  await set(ref(db,`lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,isHost:false});
+  await set(ref(db,`lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:false});
   const snap=await get(ref(db,`lobbies/${lobbyId}`));
   const lobby=snap.val();if(!lobby)return;
+  S.lobbyName=lobby.name||'Lobby';
   document.getElementById('joined-lobby-label').textContent=lobby.name;
   document.getElementById('joined-topic').textContent=lobby.scenarioTitle||'Scenario';
   goTo('s-joined');
   onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>{
-    document.getElementById('joined-players').innerHTML=Object.entries(snap.val()||{}).map(([id,p],i)=>`
-      <div class="player-row">${avatar(p.nick,i)}<div class="player-name-text">${p.nick}</div>
-      ${p.isHost?'<span class="tag tag-host">HOST</span>':''}
-      ${id===S.uid?'<span class="tag tag-you">YOU</span>':''}</div>`).join('');
+    document.getElementById('joined-players').innerHTML=Object.entries(snap.val()||{}).map(([id,p])=>`
+      <div class="player-row"><div class="avatar-sm">${p.avatar||'🧑'}</div><div class="player-name-text">${p.nick}</div>
+      ${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}</div>`).join('');
   });
   onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{
     const st=snap.val();
     if(st==='playing')enterGame();
     if(st==='lobby')goTo('s-joined');
+  });
+  // Listen for scenario updates
+  onValue(ref(db,`lobbies/${S.lobbyId}/scenarioTitle`),snap=>{
+    if(snap.val())document.getElementById('joined-topic').textContent=snap.val();
   });
 };
 
@@ -680,9 +728,6 @@ window.leaveLobby=async function(){
   if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
   S.lobbyId='';goTo('s-menu');
 };
-
-// ── Init ────────────────────────────────────────────────────
-updateTopics();
 </script>
 </body>
 </html>
