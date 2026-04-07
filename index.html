@@ -276,6 +276,16 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
   <!-- Host can change scenario before/after game -->
   <div class="host-lobby-controls">
+    <div class="label">Conversation time</div>
+    <select id="host-timer-select" style="margin-bottom:12px;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.15);background:#fff;font-family:Nunito,sans-serif;font-size:15px;font-weight:600;">
+      <option value="30">30 seconds</option>
+      <option value="60">1 minute</option>
+      <option value="90" selected>1:30 minutes</option>
+      <option value="120">2 minutes</option>
+      <option value="150">2:30 minutes</option>
+      <option value="180">3 minutes</option>
+      <option value="300">5 minutes</option>
+    </select>
     <div class="label">Change scenario</div>
     <select id="host-scenario-select" style="margin-bottom:8px;width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.15);background:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:600;"></select>
     <div style="display:flex;gap:8px;">
@@ -393,9 +403,10 @@ function uid(){return Math.random().toString(36).slice(2,9);}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
 function situationHTML(text,nickA,nickB){return text.replace('[A]',`<span class="nick-a">${nickA}</span>`).replace('[B]',`<span class="nick-b">${nickB}</span>`);}
 
-function roleCardHTML(role,scenarioId){
+function roleCardHTML(role,scenarioId,nick){
+  const displayNick=nick||role;
   const sc=SCENARIOS[scenarioId];const r=role==='A'?sc.roleA:sc.roleB;const cls=role==='A'?'a':'b';
-  return `<div class="role-card ${cls}"><div class="role-label">${r.label}</div>
+  return `<div class="role-card ${cls}"><div class="role-label">${displayNick} — ${r.label.split("—")[1]?.trim()||r.label}</div>
     <div class="phrase-section"><div class="phrase-cat">Start a conversation</div><div class="phrase-list">${r.start.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
     <div class="phrase-section"><div class="phrase-cat">Keep it going</div><div class="phrase-list">${r.keep.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
     <div class="phrase-section"><div class="phrase-cat">End the conversation</div><div class="phrase-list">${r.end.map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>
@@ -518,6 +529,7 @@ function returnToHostLobby(){
 // ── Start game ─────────────────────────────────────────────
 window.startGame=async function(){
   const scenarioId=document.getElementById('host-scenario-select').value||S.scenarioId;
+  S.timerDuration=parseInt(document.getElementById('host-timer-select')?.value||90);
   S.scenarioId=scenarioId;
   const sc=SCENARIOS[scenarioId];
   await update(ref(db,`lobbies/${S.lobbyId}`),{scenarioId,scenarioTitle:sc.title});
@@ -569,7 +581,7 @@ function renderGameUI(){
   document.getElementById('game-img').src=sc.image;
   document.getElementById('game-topic').textContent=sc.title;
   document.getElementById('game-situation').innerHTML=situationHTML(sc.situation,nickA,nickB);
-  document.getElementById('game-role-card').innerHTML=roleCardHTML(S.myRole,S.scenarioId);
+  document.getElementById('game-role-card').innerHTML=roleCardHTML(S.myRole,S.scenarioId,S.nick);
   renderPlayersBar();
 }
 
@@ -579,18 +591,20 @@ function renderPlayersBar(){
     <div class="player-chip me">
       <div class="player-chip-avatar">${S.avatar}</div>
       <div class="player-chip-name">${S.nick}</div>
-      <div class="player-chip-you">you · Person ${meIsA?'A':'B'}</div>
+      <div class="player-chip-you">you</div>
     </div>
     <div class="player-chip partner">
       <div class="player-chip-avatar">${S.partnerAvatar}</div>
       <div class="player-chip-name">${S.partnerNick}</div>
-      <div class="player-chip-you">Person ${meIsA?'B':'A'}</div>
+      <div class="player-chip-you"></div>
     </div>`;
 }
 
 // ── Timer ──────────────────────────────────────────────────
 function startTimer(afterSwap){
-  clearInterval(S.timerInterval);S.timerVal=90;tick();
+  const dur=parseInt(document.getElementById('host-timer-select')?.value||S.timerDuration||90);
+  S.timerDuration=dur;
+  clearInterval(S.timerInterval);S.timerVal=dur;tick();
   S.timerInterval=setInterval(()=>{
     S.timerVal--;tick();
     if(S.timerVal<=0){
@@ -686,9 +700,18 @@ function loadLobbies(){
   onValue(ref(db,'lobbies'),snap=>{
     const lobbies=snap.val()||{};
     // Show only lobbies with players, not owned by me, and in waiting/lobby state
+    // Auto-delete lobbies older than 4 hours or with no players
+    for(const [id,l] of Object.entries(lobbies)){
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      const playerCount=Object.keys(l.players||{}).length;
+      if(age>4||playerCount===0){
+        remove(ref(db,`lobbies/${id}`));
+      }
+    }
     const available=Object.entries(lobbies).filter(([,l])=>{
       const players=Object.keys(l.players||{});
-      return players.length>0 && l.hostId!==S.uid && (l.status==='waiting'||l.status==='lobby');
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      return players.length>0 && age<=4 && l.hostId!==S.uid && (l.status==='waiting'||l.status==='lobby');
     });
     document.getElementById('lobby-list').innerHTML=available.length
       ?available.map(([id,l])=>`<div class="lobby-row" onclick="joinLobby('${id}')">
@@ -725,7 +748,11 @@ window.joinLobby=async function(lobbyId){
 };
 
 window.leaveLobby=async function(){
-  if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
+  if(S.lobbyId){
+    await remove(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
+    const snap=await get(ref(db,`lobbies/${S.lobbyId}/players`));
+    if(!snap.val()||Object.keys(snap.val()).length===0)await remove(ref(db,`lobbies/${S.lobbyId}`));
+  }
   S.lobbyId='';goTo('s-menu');
 };
 </script>
