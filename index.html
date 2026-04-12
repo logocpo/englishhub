@@ -371,7 +371,7 @@ let roomListenerOff=null;
 // ── Helpers ───────────────────────────────────────────────
 function uid(){return Math.random().toString(36).slice(2,9);}
 function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500);}
-function situationHTML(text,nickA,nickB){return text.replace('[A]',`<span class="nick-a">${nickA}</span>`).replace('[B]',`<span class="nick-b">${nickB}</span>`);}
+function situationHTML(text,nickA,nickB){return text.replaceAll('[A]',`<span class="nick-a">${nickA}</span>`).replaceAll('[B]',`<span class="nick-b">${nickB}</span>`);}
 function getScenario(level,topicKey,scenarioKey){return CONTENT[level]?.topics[topicKey]?.scenarios[scenarioKey];}
 function getScenarioIds(level,topicKey){return Object.keys(CONTENT[level]?.topics[topicKey]?.scenarios||{});}
 
@@ -494,7 +494,7 @@ function listenHostLobby(){
   onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>renderHostPlayers(snap.val()||{}));
   onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{
     const st=snap.val();
-    if(st==='playing'||st==='nextscenario')enterGame();
+    if(st==='playing')enterGame();
     if(st==='lobby')returnToHostLobby();
   });
 }
@@ -599,7 +599,10 @@ function startTimer(afterSwap){
   S.timerInterval=setInterval(()=>{
     S.timerVal--;tick();
     if(S.timerVal<=5&&S.timerVal>0)beep(S.timerVal<=2?1200:880,0.08);
-    if(S.timerVal<=0){clearInterval(S.timerInterval);beep(440,0.5);if(S.isHost&&!afterSwap)doSwapRoles();}
+    if(S.timerVal<=0){clearInterval(S.timerInterval);beep(440,0.5);
+      if(S.isHost&&!afterSwap){doSwapRoles();}
+      else if(S.isHost&&afterSwap){setTimeout(()=>hostNextScenario(),11000);}
+    }
   },1000);
 }
 function tick(){
@@ -662,7 +665,9 @@ window.hostNextScenario=async function(){
     await update(ref(db,`lobbies/${S.lobbyId}/players/${shuffled[i+1]}`),{room:roomId,role:'B'});
   }
   await set(ref(db,`lobbies/${S.lobbyId}/rooms`),newRooms);
-  await update(ref(db,`lobbies/${S.lobbyId}`),{scenarioKey:nextKey,scenarioTitle:sc.title,status:'nextscenario'});
+  // Set to 'switching' first to guarantee Firebase fires even if status was already 'nextscenario'
+  await update(ref(db,`lobbies/${S.lobbyId}`),{scenarioKey:nextKey,scenarioTitle:sc.title,status:'switching',switchedAt:Date.now()});
+  await update(ref(db,`lobbies/${S.lobbyId}`),{status:'playing'});
 };
 
 window.quitGame=async function(){
@@ -713,7 +718,7 @@ window.joinLobby=async function(lobbyId){
   });
   onValue(ref(db,`lobbies/${S.lobbyId}/status`),snap=>{
     const st=snap.val();
-    if(st==='playing'||st==='nextscenario')enterGame();
+    if(st==='playing')enterGame();
     if(st==='lobby')goTo('s-joined');
   });
   onValue(ref(db,`lobbies/${S.lobbyId}/timerDuration`),snap=>{if(snap.val())S.timerDuration=snap.val();});
