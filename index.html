@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<title>MLC RolePlay</title>
+<title>RolePlay</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
@@ -131,8 +131,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-nick" class="screen active">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div></div>
   </div>
   <h1>Welcome!</h1>
   <p class="sub">Enter your nickname to start practicing English with your classmates.</p>
@@ -145,8 +145,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-menu" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div></div>
   </div>
   <div class="user-chip" onclick="goTo('s-nick')">
     <div class="user-chip-avatar" id="menu-avatar">🦁</div>
@@ -174,8 +174,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-lobbies" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline">Join a lobby</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Join a lobby</div></div>
   </div>
   <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
   <h2>Open lobbies</h2>
@@ -184,8 +184,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-joined" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline" id="joined-lobby-label">Lobby</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline" id="joined-lobby-label">Lobby</div></div>
   </div>
   <button class="back-btn" onclick="leaveLobby()">← Leave lobby</button>
   <div class="card">
@@ -200,8 +200,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-create" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline">Create a lobby</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Create a lobby</div></div>
   </div>
   <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
   <h2>Set up your lobby</h2>
@@ -226,8 +226,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-host" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline">Host — managing lobby</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Host — managing lobby</div></div>
   </div>
   <button class="back-btn" onclick="hostLeave()">← Leave lobby</button>
   <div class="card">
@@ -264,8 +264,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-solo" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline">Solo practice</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Solo practice</div></div>
   </div>
   <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
   <div class="label">English level</div>
@@ -279,8 +279,8 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <div id="s-game" class="screen">
   <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
-    <div><div class="app-name">MLC RolePlay</div><div class="app-tagline" id="game-lobby-label">Lobby</div></div>
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline" id="game-lobby-label">Lobby</div></div>
   </div>
   <div class="role-swap" id="role-swap-banner">
     <div class="role-swap-title">Roles have changed! ✅</div>
@@ -330,6 +330,7 @@ const CONTENT = {
     topics: {
       '1C': {
         label: 'How to start and end a conversation',
+        catLabels: {start:'Start a conversation',keep:'Keep it going',end:'End the conversation'},
         scenarios: {
           '1': { title: 'Scenario 1 — Local café', image: 'Scenario1.png', situation: '[A] is sitting at a small table with a laptop at a busy local café, and [B] is looking for a place to sit and a power outlet to charge their phone.', roleA: { label: 'at the table with laptop', start: ["I'm (name), by the way."], keep: ['No problem', 'Go ahead', 'Not at all'], end: ['(Great/Nice) talking to you', 'Have fun. / Have a good time.'] }, roleB: { label: 'looking for a seat', start: ['Excuse me, is anyone sitting here?', 'Do you mind if I charge my phone here?'], keep: ['What about you?', 'How about you?', 'And you?'], end: ['OK, nice to meet you', "I've got to go."] } },
           '2': { title: 'Scenario 2 — Office kitchen', image: 'Scenario2.png', situation: "[A] and [B] are colleagues who haven't seen each other since the weekend. They meet in the office kitchen on Monday morning while the coffee machine is running.", roleA: { label: 'colleague', start: ["It's a lovely morning, isn't it?", 'How was your weekend?'], keep: ['Help yourself', 'Be my guest', 'No problem'], end: ["I've got to go", "That's my bus!"] }, roleB: { label: 'colleague', start: ['Did you hear about the accident?', 'Are you doing anything nice at the weekend?'], keep: ['What about you?', 'How about you?', 'And you?'], end: ['See you later', '(Great/Nice) talking to you'] } },
@@ -344,6 +345,7 @@ const CONTENT = {
     topics: {
       '1C': {
         label: 'How to express personal preferences',
+        catLabels: {start:'Expressing likes and dislikes',keep:'Discussing opinions',end:'Compromising'},
         scenarios: {
           '1': { title: 'Scenario 1 — Dinner at home', image: 'B2_Scenario1.jpg', situation: '[A] and [B] are roommates trying to decide what to cook for dinner tonight. [A] wants to try a complex new recipe, while [B] is tired and wants something quick and easy.', roleA: { label: 'wants a complex recipe', start: ["I'm really into...", 'What I love about... is...'], keep: ["I'd (much) rather...", "Given the choice, I'd...", "I'd prefer to..."], end: ["I'd be happy to... , but I don't want to...", 'How about if we... , then we can... ?'] }, roleB: { label: 'wants something quick', start: ["... isn't really my cup of tea", "I'm (not) a big fan of..."], keep: ["I'd rather... than...", "I'd rather not...", "I'd prefer (not) to..."], end: ["We'd be happy to... , but we don't want to...", 'How about if we... , then we can... ?'] } },
           '2': { title: 'Scenario 2 — Team-building activity', image: 'B2_Scenario2.png', situation: '[A] and [B] are colleagues planning a team-building activity. [A] suggests an outdoor adventure park, but [B] prefers a quiet indoor workshop.', roleA: { label: 'suggests outdoor adventure', start: ["I'm passionate about...", 'The thing I love about... is...'], keep: ["Given the choice, I'd...", "I'd (much) rather...", "I'd prefer to..."], end: ["I'd be happy to... , but I don't want to...", 'How about if we... , then we can... ?'] }, roleB: { label: 'prefers indoor workshop', start: ["... isn't really my cup of tea", "I'm (not) keen on..."], keep: ["I'd rather not...", "I'd (much) rather...", "I'd prefer (not) to..."], end: ["We'd be happy to... , but we don't want to...", 'How about if we... , then we can... ?'] } },
@@ -380,9 +382,9 @@ function roleCardHTML(role,level,topicKey,scenarioKey,nick){
   const r=role==='A'?sc.roleA:sc.roleB;
   const cls=role==='A'?'a':'b';
   const cats=Object.keys(r).filter(k=>k!=='label');
-  const catLabels={'start':'Start a conversation','keep':'Keep it going','end':'End the conversation','start_b':'Start a conversation','Expressing likes and dislikes':'Expressing likes and dislikes','Discussing opinions':'Discussing opinions','Compromising':'Compromising'};
+  const topicCatLabels=CONTENT[level]?.topics[topicKey]?.catLabels||{};
   const phrases=cats.map(k=>{
-    const label=catLabels[k]||k;
+    const label=topicCatLabels[k]||k;
     return `<div class="phrase-section"><div class="phrase-cat">${label}</div><div class="phrase-list">${r[k].map(p=>`<span class="phrase-pill">${p}</span>`).join('')}</div></div>`;
   }).join('');
   return `<div class="role-card ${cls}"><div class="role-label">${nick||role} — ${r.label}</div>${phrases}</div>`;
@@ -600,8 +602,12 @@ function startTimer(afterSwap){
     S.timerVal--;tick();
     if(S.timerVal<=5&&S.timerVal>0)beep(S.timerVal<=2?1200:880,0.08);
     if(S.timerVal<=0){clearInterval(S.timerInterval);beep(440,0.5);
-      if(S.isHost&&!afterSwap){doSwapRoles();}
-      else if(S.isHost&&afterSwap){setTimeout(()=>hostNextScenario(),11000);}
+      if(S.isHost&&!afterSwap){
+        doSwapRoles();
+      } else if(S.isHost&&afterSwap){
+        // After banner (10s) + small buffer (1s) = auto next scenario
+        setTimeout(()=>hostNextScenario(),6000);
+      }
     }
   },1000);
 }
@@ -624,10 +630,20 @@ function listenRoomChanges(){
     const wasSwapped=room.rolesSwapped||false;
     const meSnap=await get(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`));
     S.myRole=meSnap.val()?.role||'A';
+    // Stop any running timer immediately — don't let it tick during the banner
+    clearInterval(S.timerInterval);
+    document.getElementById('timer-num').textContent='';
+    document.getElementById('timer-lbl').textContent='Roles changing…';
+    document.getElementById('timer-ring').classList.remove('warn');
     const banner=document.getElementById('role-swap-banner');
     banner.classList.add('show');
     beep(660,0.15);
-    setTimeout(()=>{banner.classList.remove('show');renderGameUI();startTimer(wasSwapped);},10000);
+    // Only start next timer after banner disappears (10 sec)
+    setTimeout(()=>{
+      banner.classList.remove('show');
+      renderGameUI();
+      startTimer(wasSwapped);
+    },5000);
   });
   roomListenerOff=()=>off(roomRef);
 }
