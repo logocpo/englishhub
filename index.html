@@ -125,6 +125,18 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 .user-chip-edit{font-size:12px;color:var(--brand);font-weight:700;}
 .topic-row{display:flex;gap:8px;margin-bottom:14px;}
 .topic-row select{flex:1;margin-bottom:0;}
+
+.task-toggle{padding:6px 12px;border-radius:99px;border:1.5px solid var(--border2);background:var(--bg2);font-family:'Nunito',sans-serif;font-size:12px;font-weight:700;cursor:pointer;color:var(--text2);transition:all 0.15s;}
+.task-toggle.active{background:var(--brand);border-color:var(--brand);color:white;}
+
+.mode-selector{display:flex;gap:10px;margin-bottom:4px;}
+.mode-option{flex:1;display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:var(--r);border:2px solid var(--border2);background:var(--bg);cursor:pointer;transition:all 0.15s;}
+.mode-option:hover{border-color:var(--brand);background:var(--brand-light);}
+.mode-option.selected{border-color:var(--brand);background:var(--brand-light);}
+.mode-emoji{font-size:22px;flex-shrink:0;}
+.mode-name{font-size:13px;font-weight:800;color:var(--text1);}
+.mode-desc{font-size:11px;color:var(--text3);font-weight:600;margin-top:1px;}
+.mode-option.selected .mode-name{color:var(--brand-dark);}
 </style>
 </head>
 <body>
@@ -153,21 +165,40 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="user-chip-name" id="menu-name">—</div>
     <div class="user-chip-edit">Change ›</div>
   </div>
-  <h2>Small Talk</h2>
-  <p class="sub">How do you want to practice today?</p>
-  <button class="btn" onclick="goTo('s-lobbies')">
+
+  <div class="label">Choose a mode</div>
+  <div class="mode-selector" id="mode-selector">
+    <div class="mode-option selected" data-mode="smalltalk" onclick="selectMode(this)">
+      <span class="mode-emoji">💬</span>
+      <div>
+        <div class="mode-name">Small Talk</div>
+        <div class="mode-desc">B1 / B2 conversation practice</div>
+      </div>
+    </div>
+    <div class="mode-option" data-mode="verbs" onclick="selectMode(this)">
+      <span class="mode-emoji">📚</span>
+      <div>
+        <div class="mode-name">Irregular Verbs</div>
+        <div class="mode-desc">Grammar tasks with verb forms</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="height:16px;"></div>
+
+  <button class="btn" id="btn-join" onclick="menuJoin()">
     <div class="btn-icon" style="background:#EFF6FF;">👥</div>
     <div class="btn-text"><div class="btn-title">Join a lobby</div><div class="btn-desc">Browse open rooms</div></div>
     <span class="btn-arrow">›</span>
   </button>
-  <button class="btn" onclick="goTo('s-create')">
+  <button class="btn" id="btn-create" onclick="menuCreate()">
     <div class="btn-icon" style="background:#FEF3C7;">➕</div>
     <div class="btn-text"><div class="btn-title">Create a lobby</div><div class="btn-desc">You become the host</div></div>
     <span class="btn-arrow">›</span>
   </button>
-  <button class="btn" onclick="goTo('s-solo')">
+  <button class="btn" id="btn-solo" onclick="menuSolo()">
     <div class="btn-icon" style="background:#DCFCE7;">🙋</div>
-    <div class="btn-text"><div class="btn-title">Play by myself</div><div class="btn-desc">See both roles, practice solo</div></div>
+    <div class="btn-text"><div class="btn-title">Play by myself</div><div class="btn-desc" id="solo-desc">See both roles, practice solo</div></div>
     <span class="btn-arrow">›</span>
   </button>
 </div>
@@ -207,20 +238,6 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <h2>Set up your lobby</h2>
   <div class="label">Lobby name</div>
   <input type="text" id="lobby-name-input" placeholder="e.g. Morning Practice" maxlength="30">
-  <div class="label">English level</div>
-  <select id="level-select" onchange="updateTopics('level-select','topic-select','scenario-select')">
-    <option value="B1">B1 — Intermediate</option>
-    <option value="B2">B2 — Upper Intermediate</option>
-  </select>
-  <div class="label">Topic</div>
-  <select id="topic-select" onchange="updateScenarioSelect('level-select','topic-select','scenario-select')">
-  </select>
-  <div class="label">Scenario</div>
-  <div class="topic-row">
-    <select id="scenario-select" style="margin-bottom:0;flex:1;"></select>
-    <button class="rand-btn" style="width:auto;padding:0 14px;margin-top:0;" onclick="randomScenario('scenario-select')">🎲</button>
-  </div>
-  <div style="height:10px;"></div>
   <button class="btn primary" onclick="createLobby()">Create lobby →</button>
 </div>
 
@@ -275,6 +292,155 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <div class="label">Scenario</div>
   <select id="solo-scenario-select" onchange="renderSolo()" style="margin-bottom:16px;"></select>
   <div id="solo-content"></div>
+</div>
+
+
+<!-- IV MENU -->
+<div id="s-iv-menu" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Irregular Verbs</div></div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
+  <h2>Irregular Verbs</h2>
+  <p class="sub">Practice verb forms with grammar tasks.</p>
+  <button class="btn" onclick="goTo('s-iv-lobbies')">
+    <div class="btn-icon" style="background:#EFF6FF;">👥</div>
+    <div class="btn-text"><div class="btn-title">Join a lobby</div><div class="btn-desc">Browse open rooms</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+  <button class="btn" onclick="goTo('s-iv-create')">
+    <div class="btn-icon" style="background:#FEF3C7;">➕</div>
+    <div class="btn-text"><div class="btn-title">Create a lobby</div><div class="btn-desc">You become the host</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+</div>
+
+<!-- IV LOBBY LIST -->
+<div id="s-iv-lobbies" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Join a lobby</div></div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-iv-menu')">← Back</button>
+  <h2>Open lobbies</h2>
+  <div id="iv-lobby-list"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Loading lobbies…</div></div></div>
+</div>
+
+<!-- IV JOINED WAITING -->
+<div id="s-iv-joined" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline" id="iv-joined-label">Lobby</div></div>
+  </div>
+  <button class="back-btn" onclick="ivLeaveLobby()">← Leave lobby</button>
+  <div class="card">
+    <div class="label">Players</div>
+    <div id="iv-joined-players"></div>
+  </div>
+  <div class="status-box">⏳ Waiting for the host to start the game…</div>
+</div>
+
+<!-- IV CREATE -->
+<div id="s-iv-create" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Create a lobby</div></div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-iv-menu')">← Back</button>
+  <h2>Set up your lobby</h2>
+  <div class="label">Lobby name</div>
+  <input type="text" id="iv-lobby-name" placeholder="e.g. Grammar Practice" maxlength="30">
+  <button class="btn primary" onclick="ivCreateLobby()">Create lobby →</button>
+</div>
+
+<!-- IV HOST -->
+<div id="s-iv-host" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Host — Irregular Verbs</div></div>
+  </div>
+  <button class="back-btn" onclick="ivHostLeave()">← Leave lobby</button>
+  <div class="card">
+    <div class="label">Lobby</div>
+    <div class="card-title" id="iv-host-lobby-name">—</div>
+  </div>
+  <div class="label">Players (<span id="iv-host-player-count">0</span>)</div>
+  <div class="card" style="padding:10px 16px;"><div id="iv-host-player-list"></div></div>
+  <div class="warn-box" id="iv-odd-warn" style="display:none;background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;color:#92400E;margin-bottom:12px;">⚠️ You need at least 2 players to start.</div>
+
+  <div class="host-lobby-controls">
+    <div class="label">Time per task</div>
+    <select class="host-sel" id="iv-timer-select">
+      <option value="30">30 seconds</option>
+      <option value="60">1 minute</option>
+      <option value="90" selected>1:30 minutes</option>
+      <option value="120">2 minutes</option>
+      <option value="180">3 minutes</option>
+      <option value="300">5 minutes</option>
+    </select>
+
+    <div class="label" style="margin-top:8px;">Task types</div>
+    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+      <button class="task-toggle active" data-task="pp_pos" onclick="toggleTask(this)">Present Perfect +</button>
+      <button class="task-toggle active" data-task="pp_neg" onclick="toggleTask(this)">Present Perfect −</button>
+      <button class="task-toggle active" data-task="pp_q" onclick="toggleTask(this)">Present Perfect ?</button>
+      <button class="task-toggle active" data-task="past_p_pos" onclick="toggleTask(this)">Past Perfect +</button>
+      <button class="task-toggle active" data-task="past_p_neg" onclick="toggleTask(this)">Past Perfect −</button>
+      <button class="task-toggle active" data-task="past_p_q" onclick="toggleTask(this)">Past Perfect ?</button>
+      <button class="task-toggle active" data-task="fp_pos" onclick="toggleTask(this)">Future Perfect +</button>
+      <button class="task-toggle active" data-task="fp_neg" onclick="toggleTask(this)">Future Perfect −</button>
+      <button class="task-toggle active" data-task="fp_q" onclick="toggleTask(this)">Future Perfect ?</button>
+      <button class="task-toggle active" data-task="ppc" onclick="toggleTask(this)">Present Perfect Cont.</button>
+      <button class="task-toggle active" data-task="pastpc" onclick="toggleTask(this)">Past Perfect Cont.</button>
+      <button class="task-toggle active" data-task="cond2" onclick="toggleTask(this)">2nd Conditional</button>
+      <button class="task-toggle active" data-task="cond3" onclick="toggleTask(this)">3rd Conditional</button>
+    </div>
+    <button class="rand-btn" style="width:100%;padding:10px;margin-bottom:0;" onclick="ivToggleAll()">All / None</button>
+  </div>
+  <div style="height:12px;"></div>
+  <button class="btn success" onclick="ivStartGame()">Start game →</button>
+</div>
+
+<!-- IV GAME — WAITING (non-active player) -->
+<div id="s-iv-wait" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline" id="iv-wait-label">Irregular Verbs</div></div>
+  </div>
+  <div class="status-box" id="iv-whose-turn" style="font-size:16px;font-weight:900;margin-bottom:16px;">—</div>
+  <div class="card" id="iv-wait-verb-card"></div>
+  <div class="card" style="background:var(--bg2);border-style:dashed;">
+    <div class="label">Task</div>
+    <div id="iv-wait-task" style="font-size:14px;color:var(--text2);line-height:1.7;"></div>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-ring" id="iv-wait-timer-ring"><div class="timer-num" id="iv-wait-timer">1:30</div></div>
+    <div class="timer-lbl" id="iv-wait-timer-lbl">Time remaining</div>
+  </div>
+</div>
+
+<!-- IV GAME — ACTIVE player's turn -->
+<div id="s-iv-active" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Your turn!</div></div>
+  </div>
+  <div style="background:var(--green-light);border:1px solid #86EFAC;border-radius:10px;padding:12px 14px;text-align:center;margin-bottom:14px;">
+    <div style="font-size:15px;font-weight:900;color:#15803D;">Your turn! 🎯</div>
+  </div>
+  <div class="card" id="iv-active-verb-card"></div>
+  <div class="card" style="border-color:var(--brand);background:var(--brand-light);">
+    <div class="label" style="color:var(--brand-dark);">Your task</div>
+    <div id="iv-active-task" style="font-size:15px;font-weight:700;color:var(--brand-dark);line-height:1.7;"></div>
+  </div>
+  <div class="timer-wrap">
+    <div class="timer-ring" id="iv-active-timer-ring"><div class="timer-num" id="iv-active-timer">1:30</div></div>
+    <div class="timer-lbl" id="iv-active-timer-lbl">Time remaining</div>
+  </div>
+  <div id="iv-host-next-btn" style="display:none;">
+    <button class="btn danger" onclick="ivNextTask()">Next task →</button>
+  </div>
 </div>
 
 <div id="s-game" class="screen">
@@ -441,6 +607,7 @@ window.goTo=function(id){
   document.getElementById(id).classList.add('active');
   if(id==='s-lobbies')loadLobbies();
   if(id==='s-solo')renderSolo();
+  if(id==='s-iv-lobbies')ivLoadLobbies();
 };
 
 window.submitNick=function(){
@@ -473,9 +640,8 @@ renderSolo();
 // ── Create lobby ────────────────────────────────────────────
 window.createLobby=async function(){
   const name=document.getElementById('lobby-name-input').value.trim()||'My Lobby';
-  const level=document.getElementById('level-select').value;
-  const topicKey=document.getElementById('topic-select').value;
-  const scenarioKey=document.getElementById('scenario-select').value;
+  // Defaults — host picks level/topic/scenario from the host lobby screen
+  const level='B1'; const topicKey='1C'; const scenarioKey='1';
   const sc=getScenario(level,topicKey,scenarioKey);
   const r=push(ref(db,'lobbies'));
   S.lobbyId=r.key;S.isHost=true;S.level=level;S.topicKey=topicKey;S.scenarioKey=scenarioKey;S.lobbyName=name;
@@ -512,7 +678,14 @@ function renderHostPlayers(players){
 }
 
 window.kickPlayer=async function(id){await remove(ref(db,`lobbies/${S.lobbyId}/players/${id}`));toast('Player removed');};
-window.hostLeave=async function(){if(S.lobbyId)await remove(ref(db,`lobbies/${S.lobbyId}`));S.lobbyId='';S.isHost=false;goTo('s-menu');};
+window.hostLeave=async function(){
+  if(S.lobbyId){
+    // Signal all players to leave before removing
+    await update(ref(db,`lobbies/${S.lobbyId}`),{status:'disbanded'});
+    await remove(ref(db,`lobbies/${S.lobbyId}`));
+  }
+  S.lobbyId='';S.isHost=false;goTo('s-menu');
+};
 function returnToHostLobby(){clearInterval(S.timerInterval);if(roomListenerOff){roomListenerOff();roomListenerOff=null;}goTo('s-host');}
 
 // ── Start game ──────────────────────────────────────────────
@@ -715,7 +888,7 @@ function loadLobbies(){
           <div class="lobby-count">${Object.keys(l.players||{}).length} players</div>
         </div>`).join('')
       :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet. Create one!</div></div>';
-  },{onlyOnce:true});
+  });
 }
 
 window.joinLobby=async function(lobbyId){
@@ -736,6 +909,7 @@ window.joinLobby=async function(lobbyId){
     const st=snap.val();
     if(st==='playing')enterGame();
     if(st==='lobby')goTo('s-joined');
+    if(st==='disbanded'){toast('The host closed the lobby');S.lobbyId='';goTo('s-menu');}
   });
   onValue(ref(db,`lobbies/${S.lobbyId}/timerDuration`),snap=>{if(snap.val())S.timerDuration=snap.val();});
 };
@@ -748,6 +922,359 @@ window.leaveLobby=async function(){
   }
   S.lobbyId='';goTo('s-menu');
 };
+const VERBS = [["be", "was/were", "been", "/biː/", "/wɒz/wɜː/", "/biːn/", "To exist; to have identity or qualities"], ["beat", "beat", "beaten", "/biːt/", "/biːt/", "/ˈbiːtən/", "To hit repeatedly; to defeat someone"], ["become", "became", "become", "/bɪˈkʌm/", "/bɪˈkeɪm/", "/bɪˈkʌm/", "To start to be something; to come to be"], ["begin", "began", "begun", "/bɪˈɡɪn/", "/bɪˈɡæn/", "/bɪˈɡʌn/", "To start doing or being something"], ["bend", "bent", "bent", "/bend/", "/bent/", "/bent/", "To make something curved; to lean forward"], ["bet", "bet", "bet", "/bet/", "/bet/", "/bet/", "To risk money on the result of an event"], ["bite", "bit", "bitten", "/baɪt/", "/bɪt/", "/ˈbɪtən/", "To cut into something with your teeth"], ["blow", "blew", "blown", "/bləʊ/", "/bluː/", "/bləʊn/", "To move air; to send air out from the mouth"], ["break", "broke", "broken", "/breɪk/", "/brəʊk/", "/ˈbrəʊkən/", "To separate into pieces; to damage something"], ["bring", "brought", "brought", "/brɪŋ/", "/brɔːt/", "/brɔːt/", "To carry or take something to a place"], ["broadcast", "broadcast", "broadcast", "/ˈbrɔːdkɑːst/", "/ˈbrɔːdkɑːst/", "/ˈbrɔːdkɑːst/", "To send out radio or television programmes"], ["build", "built", "built", "/bɪld/", "/bɪlt/", "/bɪlt/", "To make a structure by putting parts together"], ["burst", "burst", "burst", "/bɜːst/", "/bɜːst/", "/bɜːst/", "To break open suddenly due to pressure"], ["buy", "bought", "bought", "/baɪ/", "/bɔːt/", "/bɔːt/", "To get something by paying money for it"], ["catch", "caught", "caught", "/kætʃ/", "/kɔːt/", "/kɔːt/", "To take hold of something moving through the air"], ["choose", "chose", "chosen", "/tʃuːz/", "/tʃəʊz/", "/ˈtʃəʊzən/", "To decide which thing you want from a range"], ["come", "came", "come", "/kʌm/", "/keɪm/", "/kʌm/", "To move towards or to arrive at a place"], ["cost", "cost", "cost", "/kɒst/", "/kɒst/", "/kɒst/", "To have a particular price; to require payment"], ["creep", "crept", "crept", "/kriːp/", "/krept/", "/krept/", "To move slowly and quietly, close to the ground"], ["cut", "cut", "cut", "/kʌt/", "/kʌt/", "/kʌt/", "To divide something using a sharp tool"], ["deal", "dealt", "dealt", "/diːl/", "/delt/", "/delt/", "To do business; to distribute cards in a game"], ["dig", "dug", "dug", "/dɪɡ/", "/dʌɡ/", "/dʌɡ/", "To break up and move earth or soil"], ["do", "did", "done", "/duː/", "/dɪd/", "/dʌn/", "To perform an action or activity"], ["draw", "drew", "drawn", "/drɔː/", "/druː/", "/drɔːn/", "To make a picture with a pencil or pen"], ["drink", "drank", "drunk", "/drɪŋk/", "/dræŋk/", "/drʌŋk/", "To take liquid into the body through the mouth"], ["drive", "drove", "driven", "/draɪv/", "/drəʊv/", "/ˈdrɪvən/", "To operate and control a vehicle"], ["eat", "ate", "eaten", "/iːt/", "/et/", "/ˈiːtən/", "To put food in your mouth and swallow it"], ["fall", "fell", "fallen", "/fɔːl/", "/fel/", "/ˈfɔːlən/", "To move down quickly and without control"], ["feed", "fed", "fed", "/fiːd/", "/fed/", "/fed/", "To give food to a person or animal"], ["feel", "felt", "felt", "/fiːl/", "/felt/", "/felt/", "To experience an emotion or physical sensation"], ["fight", "fought", "fought", "/faɪt/", "/fɔːt/", "/fɔːt/", "To use physical force against someone"], ["find", "found", "found", "/faɪnd/", "/faʊnd/", "/faʊnd/", "To discover something by searching or by chance"], ["flee", "fled", "fled", "/fliː/", "/fled/", "/fled/", "To run away from danger or a difficult situation"], ["fly", "flew", "flown", "/flaɪ/", "/fluː/", "/fləʊn/", "To move through the air; to travel by aircraft"], ["forbid", "forbade", "forbidden", "/fəˈbɪd/", "/fəˈbeɪd/", "/fəˈbɪdən/", "To order someone not to do something"], ["forget", "forgot", "forgotten", "/fəˈɡet/", "/fəˈɡɒt/", "/fəˈɡɒtən/", "To fail to remember something"], ["forgive", "forgave", "forgiven", "/fəˈɡɪv/", "/fəˈɡeɪv/", "/fəˈɡɪvən/", "To stop being angry with someone who has done wrong"], ["freeze", "froze", "frozen", "/friːz/", "/frəʊz/", "/ˈfrəʊzən/", "To become solid because of cold; to stop moving"], ["get", "got", "gotten", "/ɡet/", "/ɡɒt/", "/ˈɡɒtən/", "To receive, obtain or fetch something"], ["give", "gave", "given", "/ɡɪv/", "/ɡeɪv/", "/ˈɡɪvən/", "To hand something to someone; to provide"], ["go", "went", "gone", "/ɡəʊ/", "/went/", "/ɡɒn/", "To move or travel to a place"], ["grow", "grew", "grown", "/ɡrəʊ/", "/ɡruː/", "/ɡrəʊn/", "To increase in size; to develop over time"], ["hang", "hung", "hung", "/hæŋ/", "/hʌŋ/", "/hʌŋ/", "To attach something at the top so it hangs freely"], ["have", "had", "had", "/hæv/", "/hæd/", "/hæd/", "To own or possess something; to experience"], ["hear", "heard", "heard", "/hɪə/", "/hɜːd/", "/hɜːd/", "To become aware of sounds through your ears"], ["hide", "hid", "hidden", "/haɪd/", "/hɪd/", "/ˈhɪdən/", "To put something where it cannot be found or seen"], ["hit", "hit", "hit", "/hɪt/", "/hɪt/", "/hɪt/", "To bring your hand against someone or something forcefully"], ["hold", "held", "held", "/həʊld/", "/held/", "/held/", "To keep something in your hand or arms"], ["hurt", "hurt", "hurt", "/hɜːt/", "/hɜːt/", "/hɜːt/", "To cause pain or injury to yourself or someone"], ["keep", "kept", "kept", "/kiːp/", "/kept/", "/kept/", "To continue to have something; to not give it away"], ["kneel", "knelt", "knelt", "/niːl/", "/nelt/", "/nelt/", "To go down on one or both knees"], ["know", "knew", "known", "/nəʊ/", "/njuː/", "/nəʊn/", "To have information or facts about something"], ["lay", "laid", "laid", "/leɪ/", "/leɪd/", "/leɪd/", "To put something down carefully in a flat position"], ["lead", "led", "led", "/liːd/", "/led/", "/led/", "To guide or be in charge of a group or activity"], ["leave", "left", "left", "/liːv/", "/left/", "/left/", "To go away from a place; to stop doing something"], ["lend", "lent", "lent", "/lend/", "/lent/", "/lent/", "To give something to someone for a period of time"], ["let", "let", "let", "/let/", "/let/", "/let/", "To allow something to happen; to permit someone"], ["lie", "lay", "lain", "/laɪ/", "/leɪ/", "/leɪn/", "To be in or move into a flat horizontal position"], ["light", "lit", "lit", "/laɪt/", "/lɪt/", "/lɪt/", "To make something start to burn or produce light"], ["lose", "lost", "lost", "/luːz/", "/lɒst/", "/lɒst/", "To be unable to find something; to fail to win"], ["make", "made", "made", "/meɪk/", "/meɪd/", "/meɪd/", "To create or produce something; to cause something"], ["mean", "meant", "meant", "/miːn/", "/ment/", "/ment/", "To have as a meaning; to intend to say something"], ["meet", "met", "met", "/miːt/", "/met/", "/met/", "To see and talk to someone for the first time"], ["pay", "paid", "paid", "/peɪ/", "/peɪd/", "/peɪd/", "To give money in exchange for goods or services"], ["put", "put", "put", "/pʊt/", "/pʊt/", "/pʊt/", "To move something to a particular position or place"], ["read", "read", "read", "/riːd/", "/red/", "/red/", "To look at and understand written or printed words"], ["ride", "rode", "ridden", "/raɪd/", "/rəʊd/", "/ˈrɪdən/", "To sit on and control a horse, bicycle or vehicle"], ["ring", "rang", "rung", "/rɪŋ/", "/ræŋ/", "/rʌŋ/", "To make a clear sound like a bell; to telephone"], ["rise", "rose", "risen", "/raɪz/", "/rəʊz/", "/ˈrɪzən/", "To move upward; to increase in amount or level"], ["run", "ran", "run", "/rʌn/", "/ræn/", "/rʌn/", "To move quickly using your legs; to manage something"], ["say", "said", "said", "/seɪ/", "/sed/", "/sed/", "To speak words; to express something in words"], ["see", "saw", "seen", "/siː/", "/sɔː/", "/siːn/", "To become aware of something using your eyes"], ["seek", "sought", "sought", "/siːk/", "/sɔːt/", "/sɔːt/", "To look for something or someone; to try to get"], ["sell", "sold", "sold", "/sel/", "/səʊld/", "/səʊld/", "To give something to someone in exchange for money"], ["send", "sent", "sent", "/send/", "/sent/", "/sent/", "To make something go to a place without going yourself"], ["set", "set", "set", "/set/", "/set/", "/set/", "To put something in a particular place or position"], ["sew", "sewed", "sewn", "/səʊ/", "/səʊd/", "/səʊn/", "To join pieces of cloth using a needle and thread"], ["shake", "shook", "shaken", "/ʃeɪk/", "/ʃʊk/", "/ˈʃeɪkən/", "To move something quickly up and down or side to side"], ["shine", "shone", "shone", "/ʃaɪn/", "/ʃɒn/", "/ʃɒn/", "To produce or reflect bright light"], ["shoot", "shot", "shot", "/ʃuːt/", "/ʃɒt/", "/ʃɒt/", "To fire a weapon; to move very quickly"], ["show", "showed", "shown", "/ʃəʊ/", "/ʃəʊd/", "/ʃəʊn/", "To let someone see something; to demonstrate"], ["shrink", "shrank", "shrunk", "/ʃrɪŋk/", "/ʃræŋk/", "/ʃrʌŋk/", "To become smaller, especially when washed"], ["shut", "shut", "shut", "/ʃʌt/", "/ʃʌt/", "/ʃʌt/", "To close something; to move so that it is closed"], ["sing", "sang", "sung", "/sɪŋ/", "/sæŋ/", "/sʌŋ/", "To make musical sounds with your voice"], ["sink", "sank", "sunk", "/sɪŋk/", "/sæŋk/", "/sʌŋk/", "To go down below the surface of water or liquid"], ["sit", "sat", "sat", "/sɪt/", "/sæt/", "/sæt/", "To be in a position with your weight on your bottom"], ["sleep", "slept", "slept", "/sliːp/", "/slept/", "/slept/", "To rest with your eyes closed and your mind inactive"], ["slide", "slid", "slid", "/slaɪd/", "/slɪd/", "/slɪd/", "To move smoothly over a surface"], ["speak", "spoke", "spoken", "/spiːk/", "/spəʊk/", "/ˈspəʊkən/", "To say words; to have a conversation"], ["spend", "spent", "spent", "/spend/", "/spent/", "/spent/", "To use time or money for a particular purpose"], ["spit", "spat", "spat", "/spɪt/", "/spæt/", "/spæt/", "To force liquid out of your mouth"], ["split", "split", "split", "/splɪt/", "/splɪt/", "/splɪt/", "To divide into two or more parts"], ["spread", "spread", "spread", "/spred/", "/spred/", "/spred/", "To open something out to cover a larger area"], ["spring", "sprang", "sprung", "/sprɪŋ/", "/spræŋ/", "/sprʌŋ/", "To move suddenly and quickly; to jump"], ["stand", "stood", "stood", "/stænd/", "/stʊd/", "/stʊd/", "To be in an upright position on your feet"], ["steal", "stole", "stolen", "/stiːl/", "/stəʊl/", "/ˈstəʊlən/", "To take something that belongs to someone else"], ["stick", "stuck", "stuck", "/stɪk/", "/stʌk/", "/stʌk/", "To attach with glue; to become fixed in a position"], ["sting", "stung", "stung", "/stɪŋ/", "/stʌŋ/", "/stʌŋ/", "To cause sharp pain by piercing skin"], ["stink", "stank", "stunk", "/stɪŋk/", "/stæŋk/", "/stʌŋk/", "To have a very unpleasant smell"], ["strike", "struck", "struck", "/straɪk/", "/strʌk/", "/strʌk/", "To hit something forcefully; to go on strike"], ["swear", "swore", "sworn", "/sweə/", "/swɔː/", "/swɔːn/", "To use offensive language; to promise formally"], ["sweep", "swept", "swept", "/swiːp/", "/swept/", "/swept/", "To clean a surface by moving a brush across it"], ["swim", "swam", "swum", "/swɪm/", "/swæm/", "/swʌm/", "To move through water using your arms and legs"], ["swing", "swung", "swung", "/swɪŋ/", "/swʌŋ/", "/swʌŋ/", "To move backwards and forwards while hanging"], ["take", "took", "taken", "/teɪk/", "/tʊk/", "/ˈteɪkən/", "To move something from one place to another"], ["teach", "taught", "taught", "/tiːtʃ/", "/tɔːt/", "/tɔːt/", "To give lessons; to help someone learn something"], ["tear", "tore", "torn", "/teə/", "/tɔː/", "/tɔːn/", "To pull apart or into pieces"], ["tell", "told", "told", "/tel/", "/təʊld/", "/təʊld/", "To communicate information or a story to someone"], ["think", "thought", "thought", "/θɪŋk/", "/θɔːt/", "/θɔːt/", "To use your mind to form ideas or opinions"], ["throw", "threw", "thrown", "/θrəʊ/", "/θruː/", "/θrəʊn/", "To send something through the air by moving your arm"], ["understand", "understood", "understood", "/ˌʌndəˈstænd/", "/ˌʌndəˈstʊd/", "/ˌʌndəˈstʊd/", "To know the meaning or reason for something"], ["wake", "woke", "woken", "/weɪk/", "/wəʊk/", "/ˈwəʊkən/", "To stop sleeping; to make someone stop sleeping"], ["wear", "wore", "worn", "/weə/", "/wɔː/", "/wɔːn/", "To have clothing or jewellery on your body"], ["weep", "wept", "wept", "/wiːp/", "/wept/", "/wept/", "To cry, especially because of sadness"], ["win", "won", "won", "/wɪn/", "/wʌn/", "/wʌn/", "To be the best or first in a competition"], ["write", "wrote", "written", "/raɪt/", "/rəʊt/", "/ˈrɪtən/", "To mark letters or words on a surface"], ["arise", "arose", "arisen", "/əˈraɪz/", "/əˈrəʊz/", "/əˈrɪzən/", "To come into existence; to occur or appear"], ["awake", "awoke", "awoken", "/əˈweɪk/", "/əˈwəʊk/", "/əˈwəʊkən/", "To stop sleeping; to become conscious or aware"], ["bear", "bore", "born", "/beə/", "/bɔː/", "/bɔːn/", "To carry or support; to give birth to"], ["bind", "bound", "bound", "/baɪnd/", "/baʊnd/", "/baʊnd/", "To tie or fasten something tightly together"], ["bleed", "bled", "bled", "/bliːd/", "/bled/", "/bled/", "To lose blood from the body"], ["breed", "bred", "bred", "/briːd/", "/bred/", "/bred/", "To keep animals for the purpose of producing young"], ["burn", "burnt", "burnt", "/bɜːn/", "/bɜːnt/", "/bɜːnt/", "To produce flames and heat; to be on fire"], ["cast", "cast", "cast", "/kɑːst/", "/kɑːst/", "/kɑːst/", "To throw something; to assign a role in a performance"], ["cling", "clung", "clung", "/klɪŋ/", "/klʌŋ/", "/klʌŋ/", "To hold tightly to something or someone"], ["dream", "dreamt", "dreamt", "/driːm/", "/dremt/", "/dremt/", "To experience images and events in your mind while sleeping"], ["fling", "flung", "flung", "/flɪŋ/", "/flʌŋ/", "/flʌŋ/", "To throw something with force and without care"], ["grind", "ground", "ground", "/ɡraɪnd/", "/ɡraʊnd/", "/ɡraʊnd/", "To crush or reduce something to small pieces or powder"], ["lean", "leant", "leant", "/liːn/", "/lent/", "/lent/", "To bend your body in a particular direction; to rest against"], ["mislay", "mislaid", "mislaid", "/ˌmɪsˈleɪ/", "/ˌmɪsˈleɪd/", "/ˌmɪsˈleɪd/", "To put something in a place and then be unable to find it"], ["mislead", "misled", "misled", "/ˌmɪsˈliːd/", "/ˌmɪsˈled/", "/ˌmɪsˈled/", "To cause someone to have a wrong idea or impression"], ["quit", "quit", "quit", "/kwɪt/", "/kwɪt/", "/kwɪt/", "To leave a job or place; to stop doing something"], ["saw", "sawed", "sawn", "/sɔː/", "/sɔːd/", "/sɔːn/", "To cut wood or another material using a saw"], ["sow", "sowed", "sown", "/səʊ/", "/səʊd/", "/səʊn/", "To plant seeds in the ground"], ["spin", "spun", "spun", "/spɪn/", "/spʌn/", "/spʌn/", "To turn around quickly; to make thread by twisting fibres"], ["spill", "spilt", "spilt", "/spɪl/", "/spɪlt/", "/spɪlt/", "To cause liquid to flow over the edge of a container"], ["stride", "strode", "stridden", "/straɪd/", "/strəʊd/", "/ˈstrɪdən/", "To walk with long, confident steps"], ["tread", "trod", "trodden", "/tred/", "/trɒd/", "/ˈtrɒdən/", "To put your foot on something; to walk in a careful way"], ["wind", "wound", "wound", "/waɪnd/", "/waʊnd/", "/waʊnd/", "To turn or wrap something around an object; to follow a twisting path"]];
+
+// ── Task definitions ─────────────────────────────────────────────
+const SIGNAL_WORDS = {
+  pp: ['for','since','just','already','yet','ever','never','so far','lately','recently','before','previously'],
+  past_p: ['by','by the time','before','after','already','just','never','previously'],
+  fp: ['by','by the time','before','already','yet']
+};
+
+const TASK_TEMPLATES = {
+  pp_pos: (nick,verb,sw) => `${nick}, create a POSITIVE (+) sentence using the verb "<b>${verb}</b>" in the <b>Present Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  pp_neg: (nick,verb,sw) => `${nick}, create a NEGATIVE (−) sentence using the verb "<b>${verb}</b>" in the <b>Present Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  pp_q:   (nick,verb,sw) => `${nick}, create a QUESTION (?) using the verb "<b>${verb}</b>" in the <b>Present Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  past_p_pos: (nick,verb,sw) => `${nick}, create a POSITIVE (+) sentence using the verb "<b>${verb}</b>" in the <b>Past Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  past_p_neg: (nick,verb,sw) => `${nick}, create a NEGATIVE (−) sentence using the verb "<b>${verb}</b>" in the <b>Past Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  past_p_q:   (nick,verb,sw) => `${nick}, create a QUESTION (?) using the verb "<b>${verb}</b>" in the <b>Past Perfect tense</b> with the signal word "<b>${sw}</b>".`,
+  fp_pos: (nick,verb,sw) => `${nick}, create a POSITIVE (+) sentence using the verb "<b>${verb}</b>" in the <b>Future Perfect Simple</b> with the signal word "<b>${sw}</b>".`,
+  fp_neg: (nick,verb,sw) => `${nick}, create a NEGATIVE (−) sentence using the verb "<b>${verb}</b>" in the <b>Future Perfect Simple</b> with the signal word "<b>${sw}</b>".`,
+  fp_q:   (nick,verb,sw) => `${nick}, create a QUESTION (?) using the verb "<b>${verb}</b>" in the <b>Future Perfect Simple</b> with the signal word "<b>${sw}</b>".`,
+  ppc:    (nick,verb)    => `${nick}, create a sentence using the verb "<b>${verb}</b>" in the <b>Present Perfect Continuous tense</b>.`,
+  pastpc: (nick,verb)    => `${nick}, create a sentence using the verb "<b>${verb}</b>" in the <b>Past Perfect Continuous tense</b>.`,
+  cond2:  (nick,verb)    => `${nick}, create a <b>Second Conditional</b> sentence using the verb "<b>${verb}</b>".`,
+  cond3:  (nick,verb)    => `${nick}, create a <b>Third Conditional</b> sentence using the verb "<b>${verb}</b>".`,
+};
+
+function getSignalWord(taskType){
+  const group = taskType.startsWith('pp_') || taskType==='ppc' ? 'pp' : taskType.startsWith('past_p') || taskType==='pastpc' ? 'past_p' : 'fp';
+  const arr = SIGNAL_WORDS[group]||SIGNAL_WORDS.pp;
+  return arr[Math.floor(Math.random()*arr.length)];
+}
+
+function buildTaskHTML(taskType, nick, verb){
+  const sw = getSignalWord(taskType);
+  const fn = TASK_TEMPLATES[taskType];
+  return fn ? fn(nick, verb, sw) : '';
+}
+
+function verbCardHTML(v){
+  return `<div style="overflow-x:auto;">
+    <table style="width:100%;border-collapse:collapse;font-size:13px;">
+      <tr style="background:#1F3864;">
+        <td style="padding:8px 10px;color:white;font-weight:800;border-radius:6px 0 0 0;">Base form</td>
+        <td style="padding:8px 10px;color:white;font-weight:800;">Past Simple</td>
+        <td style="padding:8px 10px;color:white;font-weight:800;border-radius:0 6px 0 0;">Past Participle</td>
+      </tr>
+      <tr style="background:#EFF6FF;">
+        <td style="padding:8px 10px;font-weight:900;color:#1D4ED8;font-size:15px;">${v[0]}</td>
+        <td style="padding:8px 10px;font-weight:700;color:#1D4ED8;">${v[1]}</td>
+        <td style="padding:8px 10px;font-weight:700;color:#1D4ED8;">${v[2]}</td>
+      </tr>
+      <tr style="background:#F8F9FA;">
+        <td style="padding:6px 10px;color:#666;font-style:italic;">${v[3]}</td>
+        <td style="padding:6px 10px;color:#666;font-style:italic;">${v[4]}</td>
+        <td style="padding:6px 10px;color:#666;font-style:italic;">${v[5]}</td>
+      </tr>
+      <tr>
+        <td colspan="3" style="padding:8px 10px;font-size:12px;color:#555;border-top:1px solid #e5e7eb;"><b>Definition:</b> ${v[6]}</td>
+      </tr>
+    </table>
+  </div>`;
+}
+
+// ── IV State ──────────────────────────────────────────────────────
+const IV = {
+  lobbyId:'', isHost:false, timerInterval:null, timerVal:90, timerDuration:90,
+  playerOrder:[], currentPlayerIdx:0, verbQueue:[], usedVerbs:new Set(),
+  activeTasks:[], currentTask:null, currentVerb:null
+};
+
+window.toggleTask=function(btn){btn.classList.toggle('active');};
+window.ivToggleAll=function(){
+  const btns=document.querySelectorAll('.task-toggle');
+  const anyOff=[...btns].some(b=>!b.classList.contains('active'));
+  btns.forEach(b=>b.classList.toggle('active',anyOff));
+};
+
+function ivGetActiveTasks(){
+  return [...document.querySelectorAll('.task-toggle.active')].map(b=>b.dataset.task);
+}
+
+function ivPickVerb(){
+  if(IV.verbQueue.length===0){
+    // refill queue — all verbs shuffled
+    IV.verbQueue=[...VERBS].sort(()=>Math.random()-0.5);
+  }
+  return IV.verbQueue.shift();
+}
+
+// ── IV Navigation ─────────────────────────────────────────────────
+window.ivLoadLobbies=function(){
+  const {ref,onValue,remove,getDatabase}=window._fbIV||{};
+  if(!ref)return;
+  const db=getDatabase();
+  onValue(ref(db,'iv_lobbies'),snap=>{
+    const lobbies=snap.val()||{};
+    for(const[id,l]of Object.entries(lobbies)){
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      if(age>4||Object.keys(l.players||{}).length===0)remove(ref(db,`iv_lobbies/${id}`));
+    }
+    const available=Object.entries(lobbies).filter(([,l])=>{
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      return Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&l.status==='waiting';
+    });
+    document.getElementById('iv-lobby-list').innerHTML=available.length
+      ?available.map(([id,l])=>`<div class="lobby-row" onclick="ivJoinLobby('${id}')">
+          <div style="flex:1;"><div class="lobby-name">${l.name}</div></div>
+          <div class="lobby-count">${Object.keys(l.players||{}).length} players</div>
+        </div>`).join('')
+      :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet.</div></div>';
+  },{onlyOnce:true});
+};
+
+window.ivCreateLobby=async function(){
+  const {ref,set,push,onValue,update,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  const name=document.getElementById('iv-lobby-name').value.trim()||'Grammar Lobby';
+  const r=push(ref(db,'iv_lobbies'));
+  IV.lobbyId=r.key;IV.isHost=true;
+  await set(r,{name,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',createdAt:Date.now()});
+  await set(ref(db,`iv_lobbies/${IV.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
+  document.getElementById('iv-host-lobby-name').textContent=name;
+  goTo('s-iv-host');
+  ivListenHostLobby();
+};
+
+function ivListenHostLobby(){
+  const {ref,onValue,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  onValue(ref(db,`iv_lobbies/${IV.lobbyId}/players`),snap=>ivRenderHostPlayers(snap.val()||{}));
+  onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
+    if(snap.val()==='playing')ivEnterGame();
+    if(snap.val()==='disbanded'){toast('Lobby closed');IV.lobbyId='';goTo('s-iv-menu');}
+  });
+}
+
+function ivRenderHostPlayers(players){
+  const ids=Object.keys(players);
+  document.getElementById('iv-host-player-count').textContent=ids.length;
+  const warn=document.getElementById('iv-odd-warn');
+  warn.style.display=ids.length<2?'block':'none';
+  document.getElementById('iv-host-player-list').innerHTML=ids.map(id=>{
+    const p=players[id];
+    return `<div class="player-row"><div class="avatar-sm">${p.avatar||'🧑'}</div><div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}${(!p.isHost&&id!==S.uid)?`<button class="kick-btn" onclick="ivKickPlayer('${id}')">✕</button>`:''}</div>`;
+  }).join('')||'<p style="color:var(--text3);font-size:13px;padding:8px 0;">No players yet…</p>';
+}
+
+window.ivKickPlayer=async function(id){
+  const {ref,remove,getDatabase}=window._fbIV;
+  await remove(ref(getDatabase(),`iv_lobbies/${IV.lobbyId}/players/${id}`));
+  toast('Player removed');
+};
+
+window.ivHostLeave=async function(){
+  const {ref,update,remove,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  if(IV.lobbyId){
+    await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'disbanded'});
+    await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
+  }
+  IV.lobbyId='';IV.isHost=false;clearInterval(IV.timerInterval);goTo('s-iv-menu');
+};
+
+window.ivStartGame=async function(){
+  const {ref,get,set,update,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
+  const players=snap.val()||{};
+  const ids=Object.keys(players);
+  if(ids.length<2){document.getElementById('iv-odd-warn').style.display='block';return;}
+  const timerDuration=parseInt(document.getElementById('iv-timer-select').value||90);
+  const activeTasks=ivGetActiveTasks();
+  if(!activeTasks.length){toast('Please select at least one task type');return;}
+  // Shuffle player order
+  const order=[...ids].sort(()=>Math.random()-0.5);
+  // Pick first verb and task
+  IV.verbQueue=[...VERBS].sort(()=>Math.random()-0.5);
+  const verb=IV.verbQueue.shift();
+  const taskType=activeTasks[Math.floor(Math.random()*activeTasks.length)];
+  const activePlayerId=order[0];
+  const activePlayerNick=players[activePlayerId].nick;
+  const taskHTML=buildTaskHTML(taskType,activePlayerNick,verb[0]);
+  await set(ref(db,`iv_lobbies/${IV.lobbyId}/game`),{
+    playerOrder:order,
+    currentPlayerIdx:0,
+    activeTasks,
+    timerDuration,
+    verb,
+    taskType,
+    taskHTML,
+    activePlayerId,
+    activePlayerNick,
+    round:1
+  });
+  await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'playing',timerDuration});
+};
+
+async function ivEnterGame(){
+  const {ref,get,onValue,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  const gameSnap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
+  const game=gameSnap.val();if(!game)return;
+  IV.timerDuration=game.timerDuration||90;
+  IV.playerOrder=game.playerOrder||[];
+  IV.activeTasks=game.activeTasks||[];
+  clearInterval(IV.timerInterval);
+  ivRenderGameState(game);
+  // Listen for game state changes
+  onValue(ref(db,`iv_lobbies/${IV.lobbyId}/game`),snap=>{
+    const g=snap.val();if(!g)return;
+    ivRenderGameState(g);
+  });
+}
+
+function ivRenderGameState(game){
+  clearInterval(IV.timerInterval);
+  const amActive=game.activePlayerId===S.uid;
+  const amHost=IV.isHost;
+  // Verb card
+  const vHTML=verbCardHTML(game.verb);
+  // Whose turn label
+  const turnLabel=`🎯 ${game.activePlayerNick}'s turn`;
+  if(amActive){
+    document.getElementById('iv-active-verb-card').innerHTML=vHTML;
+    document.getElementById('iv-active-task').innerHTML=game.taskHTML;
+    document.getElementById('iv-host-next-btn').style.display=amHost?'block':'none';
+    goTo('s-iv-active');
+    ivStartTimer('iv-active-timer','iv-active-timer-ring','iv-active-timer-lbl',game.timerDuration,()=>{
+      if(amHost)ivNextTask();
+    });
+  } else {
+    document.getElementById('iv-whose-turn').textContent=turnLabel;
+    document.getElementById('iv-wait-verb-card').innerHTML=vHTML;
+    document.getElementById('iv-wait-task').innerHTML=game.taskHTML;
+    document.getElementById('iv-wait-label').textContent=`${game.activePlayerNick}'s turn`;
+    if(amHost){
+      // Host sees next button on wait screen too
+      goTo('s-iv-active');
+      document.getElementById('iv-active-verb-card').innerHTML=vHTML;
+      document.getElementById('iv-active-task').innerHTML=`<span style="color:var(--text3);font-size:13px;">(You are watching — it's ${game.activePlayerNick}'s turn)</span><br><br>`+game.taskHTML;
+      document.getElementById('iv-host-next-btn').style.display='block';
+      ivStartTimer('iv-active-timer','iv-active-timer-ring','iv-active-timer-lbl',game.timerDuration,()=>{
+        if(amHost)ivNextTask();
+      });
+    } else {
+      goTo('s-iv-wait');
+      ivStartTimer('iv-wait-timer','iv-wait-timer-ring','iv-wait-timer-lbl',game.timerDuration,()=>{});
+    }
+  }
+}
+
+function ivStartTimer(numId,ringId,lblId,duration,onEnd){
+  clearInterval(IV.timerInterval);
+  IV.timerVal=duration;
+  ivTick(numId,ringId,lblId);
+  IV.timerInterval=setInterval(()=>{
+    IV.timerVal--;
+    ivTick(numId,ringId,lblId);
+    if(IV.timerVal<=5&&IV.timerVal>0)beep(IV.timerVal<=2?1200:880,0.08);
+    if(IV.timerVal<=0){clearInterval(IV.timerInterval);beep(440,0.4);onEnd();}
+  },1000);
+}
+
+function ivTick(numId,ringId,lblId){
+  const m=Math.floor(IV.timerVal/60),s=IV.timerVal%60;
+  const el=document.getElementById(numId);
+  const ring=document.getElementById(ringId);
+  const lbl=document.getElementById(lblId);
+  if(el)el.textContent=m+':'+(s<10?'0':'')+s;
+  if(ring)ring.classList.toggle('warn',IV.timerVal<=5);
+  if(lbl)lbl.textContent=IV.timerVal<=5?'Finishing soon! ⚠️':'Time remaining';
+}
+
+window.ivNextTask=async function(){
+  const {ref,get,set,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  clearInterval(IV.timerInterval);
+  const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
+  const game=snap.val();if(!game)return;
+  const pSnap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
+  const players=pSnap.val()||{};
+  // Next player
+  const order=game.playerOrder;
+  const nextIdx=(game.currentPlayerIdx+1)%order.length;
+  const nextPlayerId=order[nextIdx];
+  const nextPlayerNick=players[nextPlayerId]?.nick||'Player';
+  // Next verb (no repeats)
+  if(IV.verbQueue.length===0)IV.verbQueue=[...VERBS].sort(()=>Math.random()-0.5);
+  const verb=IV.verbQueue.shift();
+  // Next task type
+  const tasks=game.activeTasks||IV.activeTasks;
+  const taskType=tasks[Math.floor(Math.random()*tasks.length)];
+  const taskHTML=buildTaskHTML(taskType,nextPlayerNick,verb[0]);
+  await set(ref(db,`iv_lobbies/${IV.lobbyId}/game`),{
+    ...game,
+    currentPlayerIdx:nextIdx,
+    verb,taskType,taskHTML,
+    activePlayerId:nextPlayerId,
+    activePlayerNick:nextPlayerNick,
+    round:(game.round||1)+1
+  });
+};
+
+window.ivJoinLobby=async function(lobbyId){
+  const {ref,set,get,onValue,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  IV.lobbyId=lobbyId;IV.isHost=false;
+  await set(ref(db,`iv_lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:false});
+  const snap=await get(ref(db,`iv_lobbies/${lobbyId}`));
+  const lobby=snap.val();if(!lobby)return;
+  document.getElementById('iv-joined-label').textContent=lobby.name;
+  goTo('s-iv-joined');
+  onValue(ref(db,`iv_lobbies/${IV.lobbyId}/players`),snap=>{
+    document.getElementById('iv-joined-players').innerHTML=Object.entries(snap.val()||{}).map(([id,p])=>`
+      <div class="player-row"><div class="avatar-sm">${p.avatar||'🧑'}</div><div class="player-name-text">${p.nick}</div>
+      ${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}</div>`).join('');
+  });
+  onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
+    const st=snap.val();
+    if(st==='playing')ivEnterGame();
+    if(st==='disbanded'){toast('Host closed the lobby');IV.lobbyId='';goTo('s-iv-menu');}
+  });
+};
+
+window.ivLeaveLobby=async function(){
+  const {ref,remove,get,getDatabase}=window._fbIV;
+  const db=getDatabase();
+  if(IV.lobbyId){
+    await remove(ref(db,`iv_lobbies/${IV.lobbyId}/players/${S.uid}`));
+    const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
+    if(!snap.val()||Object.keys(snap.val()).length===0)await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
+  }
+  IV.lobbyId='';clearInterval(IV.timerInterval);goTo('s-iv-menu');
+};
+
+// Expose Firebase functions for IV module
+import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(m=>{
+  window._fbIV={ref:m.ref,set:m.set,get:m.get,push:m.push,onValue:m.onValue,update:m.update,remove:m.remove,off:m.off,getDatabase:()=>db};
+});
+
+
+// ── Mode selector ─────────────────────────────────────────────────
+let selectedMode = 'smalltalk';
+window.selectMode = function(el){
+  document.querySelectorAll('.mode-option').forEach(o=>o.classList.remove('selected'));
+  el.classList.add('selected');
+  selectedMode = el.dataset.mode;
+  document.getElementById('solo-desc').textContent =
+    selectedMode === 'verbs' ? 'Individual verb practice (coming soon)' : 'See both roles, practice solo';
+};
+window.menuJoin   = function(){ goTo(selectedMode==='verbs' ? 's-iv-lobbies' : 's-lobbies'); };
+window.menuCreate = function(){ goTo(selectedMode==='verbs' ? 's-iv-create'  : 's-create');  };
+window.menuSolo   = function(){ goTo(selectedMode==='verbs' ? 's-iv-menu'    : 's-solo');    };
+
 </script>
 </body>
 </html>
