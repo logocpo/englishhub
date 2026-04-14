@@ -1088,7 +1088,7 @@ window.ivToggleAll=function(){
   btns.forEach(b=>b.classList.toggle('active',anyOff));
 };
 
-window.ivGetActiveTasks=function ivGetActiveTasks(){
+function ivGetActiveTasks(){
   const selected=[...document.querySelectorAll('.task-toggle.active')].map(b=>b.dataset.task);
   const expanded=[];
   for(const t of selected){
