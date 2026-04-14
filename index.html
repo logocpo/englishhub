@@ -995,9 +995,10 @@ window.joinLobby=async function(lobbyId){
     if(st==='disbanded'){toast('The host closed the lobby');S.lobbyId='';goTo('s-menu');}
     if(st==='move_to_iv'){
       // Host switched to IV mode — join the IV lobby
-      const snap=await get(ref(db,`lobbies/${S.lobbyId}`));
-      const ivId=snap.val()?.ivLobbyId;
-      if(ivId){S.lobbyId='';await ivJoinLobby(ivId);}
+      get(ref(db,`lobbies/${S.lobbyId}`)).then(snap=>{
+        const ivId=snap.val()?.ivLobbyId;
+        if(ivId){S.lobbyId='';ivJoinLobby(ivId);}
+      });
     }
   });
   onValue(ref(db,`lobbies/${S.lobbyId}/timerDuration`),snap=>{if(snap.val())S.timerDuration=snap.val();});
