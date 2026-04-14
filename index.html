@@ -212,27 +212,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <h2>Lobby name</h2>
   <div class="label">Give your lobby a name</div>
   <input type="text" id="lobby-name-input" placeholder="e.g. Morning Practice" maxlength="30">
-  <button class="btn primary" onclick="goToChooseMode()">Continue →</button>
-</div>
-
-<div id="s-choose-mode" class="screen">
-  <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
-    <div><div class="app-name">RolePlay</div><div class="app-tagline">Choose the mode</div></div>
-  </div>
-  <button class="back-btn" onclick="goTo('s-lobby-name')">← Back</button>
-  <h2>Choose a mode</h2>
-  <p class="sub">Select what you want to practice in this lobby.</p>
-  <button class="btn" onclick="createLobbyMode('smalltalk')">
-    <div class="btn-icon" style="background:#EFF6FF;">💬</div>
-    <div class="btn-text"><div class="btn-title">Small Talk</div><div class="btn-desc">B1 / B2 conversation practice</div></div>
-    <span class="btn-arrow">›</span>
-  </button>
-  <button class="btn" onclick="createLobbyMode('verbs')">
-    <div class="btn-icon" style="background:#FEF3C7;">📚</div>
-    <div class="btn-text"><div class="btn-title">Irregular Verbs</div><div class="btn-desc">Grammar tasks with verb forms</div></div>
-    <span class="btn-arrow">›</span>
-  </button>
+  <button class="btn primary" onclick="goToUnifiedHost()">Continue →</button>
 </div>
 
 <div id="s-create" class="screen" style="display:none;"></div>
@@ -242,37 +222,80 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
     <div><div class="app-name">RolePlay</div><div class="app-tagline">Host — managing lobby</div></div>
   </div>
-  <button class="back-btn" onclick="hostLeave()">← Leave lobby</button>
+  <button class="back-btn" onclick="unifiedHostLeave()">← Leave lobby</button>
   <div class="card">
     <div class="label">Lobby</div>
     <div class="card-title" id="host-lobby-name">—</div>
-    <div class="label" style="margin-top:10px;">Current scenario</div>
-    <div class="card-sub" id="host-topic-label">—</div>
   </div>
+
   <div class="label">Players (<span id="host-player-count">0</span>)</div>
   <div class="card" style="padding:10px 16px;"><div id="host-player-list"></div></div>
   <div class="warn-box" id="odd-warn">⚠️ You need an even number of players to start.</div>
+
   <div class="host-lobby-controls">
-    <div class="label">Conversation time</div>
-    <select class="host-sel" id="host-timer-select">
-      <option value="30">30 seconds</option>
-      <option value="60">1 minute</option>
-      <option value="90" selected>1:30 minutes</option>
-      <option value="120">2 minutes</option>
-      <option value="150">2:30 minutes</option>
-      <option value="180">3 minutes</option>
-      <option value="300">5 minutes</option>
+    <div class="label">Mode</div>
+    <select class="host-sel" id="host-mode-select" onchange="onHostModeChange()">
+      <option value="smalltalk">💬  Small Talk — B1 / B2 conversation</option>
+      <option value="verbs">📚  Irregular Verbs — Grammar tasks</option>
     </select>
-    <div class="label">English level</div>
-    <select class="host-sel" id="host-level-select" onchange="updateTopics('host-level-select','host-topic-select','host-scenario-select')"></select>
-    <div class="label">Topic</div>
-    <select class="host-sel" id="host-topic-select" onchange="updateScenarioSelect('host-level-select','host-topic-select','host-scenario-select')"></select>
-    <div class="label">Scenario</div>
-    <select class="host-sel" id="host-scenario-select"></select>
-    <button class="rand-btn" onclick="randomScenario('host-scenario-select')">🎲 Random scenario</button>
+
+    <!-- Small Talk settings -->
+    <div id="host-st-settings">
+      <div class="label">Conversation time</div>
+      <select class="host-sel" id="host-timer-select">
+        <option value="30">30 seconds</option>
+        <option value="60">1 minute</option>
+        <option value="90" selected>1:30 minutes</option>
+        <option value="120">2 minutes</option>
+        <option value="150">2:30 minutes</option>
+        <option value="180">3 minutes</option>
+        <option value="300">5 minutes</option>
+      </select>
+      <div class="label">English level</div>
+      <select class="host-sel" id="host-level-select" onchange="updateTopics('host-level-select','host-topic-select','host-scenario-select')"></select>
+      <div class="label">Topic</div>
+      <select class="host-sel" id="host-topic-select" onchange="updateScenarioSelect('host-level-select','host-topic-select','host-scenario-select')"></select>
+      <div class="label">Scenario</div>
+      <select class="host-sel" id="host-scenario-select"></select>
+      <button class="rand-btn" onclick="randomScenario('host-scenario-select')">🎲 Random scenario</button>
+    </div>
+
+    <!-- IV settings -->
+    <div id="host-iv-settings" style="display:none;">
+      <div class="label">Time per task</div>
+      <select class="host-sel" id="iv-timer-select">
+        <option value="30">30 seconds</option>
+        <option value="60">1 minute</option>
+        <option value="90" selected>1:30 minutes</option>
+        <option value="120">2 minutes</option>
+        <option value="180">3 minutes</option>
+        <option value="300">5 minutes</option>
+      </select>
+      <div class="label" style="margin-top:8px;">Task types</div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
+        <button class="task-toggle active" data-task="pp_pos" onclick="toggleTask(this)">Present Perfect +</button>
+        <button class="task-toggle active" data-task="pp_neg" onclick="toggleTask(this)">Present Perfect −</button>
+        <button class="task-toggle active" data-task="pp_q" onclick="toggleTask(this)">Present Perfect ?</button>
+        <button class="task-toggle active" data-task="past_p_pos" onclick="toggleTask(this)">Past Perfect +</button>
+        <button class="task-toggle active" data-task="past_p_neg" onclick="toggleTask(this)">Past Perfect −</button>
+        <button class="task-toggle active" data-task="past_p_q" onclick="toggleTask(this)">Past Perfect ?</button>
+        <button class="task-toggle active" data-task="fp_pos" onclick="toggleTask(this)">Future Perfect +</button>
+        <button class="task-toggle active" data-task="fp_neg" onclick="toggleTask(this)">Future Perfect −</button>
+        <button class="task-toggle active" data-task="fp_q" onclick="toggleTask(this)">Future Perfect ?</button>
+        <button class="task-toggle active" data-task="ppc_pos" onclick="toggleTask(this)">Pres. Perf. Cont. +</button>
+        <button class="task-toggle active" data-task="ppc_neg" onclick="toggleTask(this)">Pres. Perf. Cont. −</button>
+        <button class="task-toggle active" data-task="ppc_q" onclick="toggleTask(this)">Pres. Perf. Cont. ?</button>
+        <button class="task-toggle active" data-task="pastpc_pos" onclick="toggleTask(this)">Past Perf. Cont. +</button>
+        <button class="task-toggle active" data-task="pastpc_neg" onclick="toggleTask(this)">Past Perf. Cont. −</button>
+        <button class="task-toggle active" data-task="pastpc_q" onclick="toggleTask(this)">Past Perf. Cont. ?</button>
+        <button class="task-toggle active" data-task="cond2" onclick="toggleTask(this)">2nd Conditional</button>
+        <button class="task-toggle active" data-task="cond3" onclick="toggleTask(this)">3rd Conditional</button>
+      </div>
+      <button class="rand-btn" style="width:100%;padding:10px;margin-bottom:0;" onclick="ivToggleAll()">All / None</button>
+    </div>
   </div>
   <div style="height:12px;"></div>
-  <button class="btn success" onclick="startGame()">Start game →</button>
+  <button class="btn success" id="host-start-btn" onclick="unifiedStartGame()">Start game →</button>
 </div>
 
 <div id="s-solo-mode" class="screen">
@@ -368,58 +391,6 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <div class="label">Lobby name</div>
   <input type="text" id="iv-lobby-name" placeholder="e.g. Grammar Practice" maxlength="30">
   <button class="btn primary" onclick="ivCreateLobby()">Create lobby →</button>
-</div>
-
-<!-- IV HOST -->
-<div id="s-iv-host" class="screen">
-  <div class="app-header">
-    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
-    <div><div class="app-name">RolePlay</div><div class="app-tagline">Host — Irregular Verbs</div></div>
-  </div>
-  <button class="back-btn" onclick="ivHostLeave()">← Leave lobby</button>
-  <div class="card">
-    <div class="label">Lobby</div>
-    <div class="card-title" id="iv-host-lobby-name">—</div>
-  </div>
-  <div class="label">Players (<span id="iv-host-player-count">0</span>)</div>
-  <div class="card" style="padding:10px 16px;"><div id="iv-host-player-list"></div></div>
-  <div class="warn-box" id="iv-odd-warn" style="display:none;background:#FEF3C7;border:1px solid #FCD34D;border-radius:10px;padding:11px 14px;font-size:13px;font-weight:700;color:#92400E;margin-bottom:12px;">⚠️ You need at least 2 players to start.</div>
-
-  <div class="host-lobby-controls">
-    <div class="label">Time per task</div>
-    <select class="host-sel" id="iv-timer-select">
-      <option value="30">30 seconds</option>
-      <option value="60">1 minute</option>
-      <option value="90" selected>1:30 minutes</option>
-      <option value="120">2 minutes</option>
-      <option value="180">3 minutes</option>
-      <option value="300">5 minutes</option>
-    </select>
-
-    <div class="label" style="margin-top:8px;">Task types</div>
-    <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-      <button class="task-toggle active" data-task="pp_pos" onclick="toggleTask(this)">Present Perfect +</button>
-      <button class="task-toggle active" data-task="pp_neg" onclick="toggleTask(this)">Present Perfect −</button>
-      <button class="task-toggle active" data-task="pp_q" onclick="toggleTask(this)">Present Perfect ?</button>
-      <button class="task-toggle active" data-task="past_p_pos" onclick="toggleTask(this)">Past Perfect +</button>
-      <button class="task-toggle active" data-task="past_p_neg" onclick="toggleTask(this)">Past Perfect −</button>
-      <button class="task-toggle active" data-task="past_p_q" onclick="toggleTask(this)">Past Perfect ?</button>
-      <button class="task-toggle active" data-task="fp_pos" onclick="toggleTask(this)">Future Perfect +</button>
-      <button class="task-toggle active" data-task="fp_neg" onclick="toggleTask(this)">Future Perfect −</button>
-      <button class="task-toggle active" data-task="fp_q" onclick="toggleTask(this)">Future Perfect ?</button>
-      <button class="task-toggle active" data-task="ppc_pos" onclick="toggleTask(this)">Pres. Perf. Cont. +</button>
-      <button class="task-toggle active" data-task="ppc_neg" onclick="toggleTask(this)">Pres. Perf. Cont. −</button>
-      <button class="task-toggle active" data-task="ppc_q" onclick="toggleTask(this)">Pres. Perf. Cont. ?</button>
-      <button class="task-toggle active" data-task="pastpc_pos" onclick="toggleTask(this)">Past Perf. Cont. +</button>
-      <button class="task-toggle active" data-task="pastpc_neg" onclick="toggleTask(this)">Past Perf. Cont. −</button>
-      <button class="task-toggle active" data-task="pastpc_q" onclick="toggleTask(this)">Past Perf. Cont. ?</button>
-      <button class="task-toggle active" data-task="cond2" onclick="toggleTask(this)">2nd Conditional</button>
-      <button class="task-toggle active" data-task="cond3" onclick="toggleTask(this)">3rd Conditional</button>
-    </div>
-    <button class="rand-btn" style="width:100%;padding:10px;margin-bottom:0;" onclick="ivToggleAll()">All / None</button>
-  </div>
-  <div style="height:12px;"></div>
-  <button class="btn success" onclick="ivStartGame()">Start game →</button>
 </div>
 
 <!-- IV GAME — WAITING (non-active player) -->
@@ -630,18 +601,89 @@ window.goTo=function(id){
   if(id==='s-solo')renderSolo();
   if(id==='s-iv-lobbies')ivLoadLobbies();
 };
-window.goToChooseMode=function(){
+window.goToUnifiedHost=async function(){
   const name=document.getElementById('lobby-name-input').value.trim();
-  if(!name){document.getElementById('lobby-name-input').focus();return;}
-  goTo('s-choose-mode');
+  if(!name){document.getElementById('lobby-name-input').focus();toast('Please enter a lobby name');return;}
+  // Create lobby in Firebase immediately, mode/settings chosen on host screen
+  await createUnifiedLobby(name);
 };
-window.createLobbyMode=function(mode){
-  if(mode==='smalltalk') createLobby();
-  else ivCreateLobbyFromMenu();
+
+window.onHostModeChange=function(){
+  const mode=document.getElementById('host-mode-select').value;
+  document.getElementById('host-st-settings').style.display=mode==='smalltalk'?'block':'none';
+  document.getElementById('host-iv-settings').style.display=mode==='verbs'?'block':'none';
+  // Update warn text
+  const warn=document.getElementById('odd-warn');
+  warn.textContent=mode==='smalltalk'
+    ?'⚠️ You need an even number of players to start.'
+    :'⚠️ You need at least 2 players to start.';
 };
-window.ivCreateLobbyFromMenu=async function(){
-  const name=document.getElementById('lobby-name-input').value.trim()||'Grammar Lobby';
-  await ivCreateLobbyCore(name);
+
+async function createUnifiedLobby(name){
+  // Create a placeholder lobby first (mode decided on host screen)
+  S.lobbyId='pending'; S.isHost=true; S.lobbyName=name;
+  document.getElementById('host-lobby-name').textContent=name;
+  document.getElementById('host-mode-select').value='smalltalk';
+  onHostModeChange();
+  // Initialise selects
+  updateTopics('host-level-select','host-topic-select','host-scenario-select');
+  // Create the actual Firebase lobby
+  const r=push(ref(db,'lobbies'));
+  S.lobbyId=r.key;
+  const level='B1'; const topicKey='1C'; const scenarioKey='1';
+  const sc=getScenario(level,topicKey,scenarioKey);
+  await set(r,{name,level,topicKey,scenarioKey,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',mode:'smalltalk',createdAt:Date.now()});
+  await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
+  goTo('s-host');
+  listenHostLobby();
+}
+
+window.unifiedStartGame=async function(){
+  const mode=document.getElementById('host-mode-select').value;
+  if(mode==='verbs'){
+    // Switch lobby to IV mode — migrate to iv_lobbies
+    const timerDuration=parseInt(document.getElementById('iv-timer-select').value||90);
+    const activeTasks=ivGetActiveTasks();
+    if(!activeTasks.length){toast('Please select at least one task type');return;}
+    // Create IV lobby with same name and players
+    const name=S.lobbyName;
+    const pSnap=await get(ref(db,`lobbies/${S.lobbyId}/players`));
+    const players=pSnap.val()||{};
+    if(Object.keys(players).length<2){document.getElementById('odd-warn').style.display='block';return;}
+    // Remove ST lobby
+    await remove(ref(db,`lobbies/${S.lobbyId}`));
+    // Create IV lobby
+    const r=push(ref(db,'iv_lobbies'));
+    IV.lobbyId=r.key; IV.isHost=true;
+    await set(r,{name,hostId:S.uid,hostNick:S.nick,timerDuration,status:'waiting',createdAt:Date.now()});
+    // Copy players
+    for(const[uid,p] of Object.entries(players)){
+      await set(ref(db,`iv_lobbies/${IV.lobbyId}/players/${uid}`),p);
+    }
+    // Start IV game directly
+    const order=Object.keys(players).sort(()=>Math.random()-0.5);
+    IV.verbQueue=[...VERBS].sort(()=>Math.random()-0.5);
+    const verb=IV.verbQueue.shift();
+    const taskType=activeTasks[Math.floor(Math.random()*activeTasks.length)];
+    const activePlayerId=order[0];
+    const activePlayerNick=players[activePlayerId].nick;
+    const taskHTML=buildTaskHTML(taskType,activePlayerNick,verb[0]);
+    await set(ref(db,`iv_lobbies/${IV.lobbyId}/game`),{playerOrder:order,currentPlayerIdx:0,activeTasks,timerDuration,verb,taskType,taskHTML,activePlayerId,activePlayerNick,round:1});
+    await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'playing',timerDuration});
+    ivEnterGame();
+  } else {
+    startGame();
+  }
+};
+
+window.unifiedHostLeave=async function(){
+  const mode=document.getElementById('host-mode-select')?.value||'smalltalk';
+  if(mode==='verbs'&&IV.lobbyId){
+    await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'disbanded'});
+    await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
+    IV.lobbyId='';
+  }
+  hostLeave();
 };
 
 window.submitNick=function(){
@@ -682,7 +724,7 @@ window.createLobby=async function(){
   await set(r,{name,level,topicKey,scenarioKey,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',createdAt:Date.now()});
   await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
   document.getElementById('host-lobby-name').textContent=name;
-  document.getElementById('host-topic-label').textContent=sc.title;
+  // topic label removed from unified host
   document.getElementById('host-level-select').value=level;
   updateTopics('host-level-select','host-topic-select','host-scenario-select');
   document.getElementById('host-topic-select').value=topicKey;
@@ -720,7 +762,7 @@ window.hostLeave=async function(){
   }
   S.lobbyId='';S.isHost=false;goTo('s-menu');
 };
-function returnToHostLobby(){clearInterval(S.timerInterval);if(roomListenerOff){roomListenerOff();roomListenerOff=null;}goTo('s-host');}
+function returnToHostLobby(){clearInterval(S.timerInterval);if(roomListenerOff){roomListenerOff();roomListenerOff=null;}goTo('s-host');onHostModeChange&&onHostModeChange();}
 
 // ── Start game ──────────────────────────────────────────────
 window.startGame=async function(){
@@ -1106,8 +1148,8 @@ window.ivCreateLobby=async function(){
   IV.lobbyId=r.key;IV.isHost=true;
   await set(r,{name,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',createdAt:Date.now()});
   await set(ref(db,`iv_lobbies/${IV.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
-  document.getElementById('iv-host-lobby-name').textContent=name;
-  goTo('s-iv-host');
+  document.getElementById('host-lobby-name').textContent=name;
+  goTo('s-host');
   ivListenHostLobby();
 }
 
@@ -1116,16 +1158,16 @@ function ivListenHostLobby(){
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/players`),snap=>ivRenderHostPlayers(snap.val()||{}));
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
     if(snap.val()==='playing')ivEnterGame();
-    if(snap.val()==='disbanded'){toast('Lobby closed');IV.lobbyId='';goTo('s-menu');}
+    if(snap.val()==='disbanded'){IV.lobbyId='';toast('Lobby closed');goTo('s-menu');}
   });
 }
 
 function ivRenderHostPlayers(players){
   const ids=Object.keys(players);
-  document.getElementById('iv-host-player-count').textContent=ids.length;
-  const warn=document.getElementById('iv-odd-warn');
+  document.getElementById('host-player-count').textContent=ids.length;
+  const warn=document.getElementById('odd-warn');
   warn.style.display=ids.length<2?'block':'none';
-  document.getElementById('iv-host-player-list').innerHTML=ids.map(id=>{
+  document.getElementById('host-player-list').innerHTML=ids.map(id=>{
     const p=players[id];
     return `<div class="player-row"><div class="avatar-sm">${p.avatar||'🧑'}</div><div class="player-name-text">${p.nick}</div>${p.isHost?'<span class="tag tag-host">HOST</span>':''}${id===S.uid?'<span class="tag tag-you">YOU</span>':''}${(!p.isHost&&id!==S.uid)?`<button class="kick-btn" onclick="ivKickPlayer('${id}')">✕</button>`:''}</div>`;
   }).join('')||'<p style="color:var(--text3);font-size:13px;padding:8px 0;">No players yet…</p>';
@@ -1150,7 +1192,7 @@ window.ivStartGame=async function(){
   const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
   const players=snap.val()||{};
   const ids=Object.keys(players);
-  if(ids.length<2){document.getElementById('iv-odd-warn').style.display='block';return;}
+  if(ids.length<2){document.getElementById('odd-warn').style.display='block';return;}
   const timerDuration=parseInt(document.getElementById('iv-timer-select').value||90);
   const activeTasks=ivGetActiveTasks();
   if(!activeTasks.length){toast('Please select at least one task type');return;}
