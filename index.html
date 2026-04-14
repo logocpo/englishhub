@@ -158,26 +158,21 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="user-chip-name" id="menu-name">—</div>
     <div class="user-chip-edit">Change ›</div>
   </div>
-
-  <div class="label">Choose a mode</div>
-  <select id="mode-dropdown" onchange="onModeChange()" style="width:100%;padding:11px 14px;border-radius:10px;border:1.5px solid rgba(0,0,0,0.15);background:#fff;font-family:'Nunito',sans-serif;font-size:15px;font-weight:700;margin-bottom:16px;color:#1a1a1a;">
-    <option value="smalltalk">💬  Small Talk — B1 / B2 conversation</option>
-    <option value="verbs">📚  Irregular Verbs — Grammar tasks</option>
-  </select>
-
-  <button class="btn" id="btn-join" onclick="menuJoin()">
+  <h2>Welcome!</h2>
+  <p class="sub">How do you want to practice today?</p>
+  <button class="btn" onclick="goTo('s-lobbies')">
     <div class="btn-icon" style="background:#EFF6FF;">👥</div>
     <div class="btn-text"><div class="btn-title">Join a lobby</div><div class="btn-desc">Browse open rooms</div></div>
     <span class="btn-arrow">›</span>
   </button>
-  <button class="btn" id="btn-create" onclick="menuCreate()">
+  <button class="btn" onclick="goTo('s-lobby-name')">
     <div class="btn-icon" style="background:#FEF3C7;">➕</div>
     <div class="btn-text"><div class="btn-title">Create a lobby</div><div class="btn-desc">You become the host</div></div>
     <span class="btn-arrow">›</span>
   </button>
-  <button class="btn" id="btn-solo" onclick="menuSolo()">
+  <button class="btn" onclick="goTo('s-solo-mode')">
     <div class="btn-icon" style="background:#DCFCE7;">🙋</div>
-    <div class="btn-text"><div class="btn-title">Play by myself</div><div class="btn-desc" id="solo-desc">See both roles, practice solo</div></div>
+    <div class="btn-text"><div class="btn-title">Play by myself</div><div class="btn-desc">Practice solo</div></div>
     <span class="btn-arrow">›</span>
   </button>
 </div>
@@ -208,17 +203,39 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   <div class="status-box">⏳ Waiting for the host to start the game…</div>
 </div>
 
-<div id="s-create" class="screen">
+<div id="s-lobby-name" class="screen">
   <div class="app-header">
     <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
     <div><div class="app-name">RolePlay</div><div class="app-tagline">Create a lobby</div></div>
   </div>
   <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
-  <h2>Set up your lobby</h2>
-  <div class="label">Lobby name</div>
+  <h2>Lobby name</h2>
+  <div class="label">Give your lobby a name</div>
   <input type="text" id="lobby-name-input" placeholder="e.g. Morning Practice" maxlength="30">
-  <button class="btn primary" onclick="createLobby()">Create lobby →</button>
+  <button class="btn primary" onclick="goToChooseMode()">Continue →</button>
 </div>
+
+<div id="s-choose-mode" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Choose the mode</div></div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-lobby-name')">← Back</button>
+  <h2>Choose a mode</h2>
+  <p class="sub">Select what you want to practice in this lobby.</p>
+  <button class="btn" onclick="createLobbyMode('smalltalk')">
+    <div class="btn-icon" style="background:#EFF6FF;">💬</div>
+    <div class="btn-text"><div class="btn-title">Small Talk</div><div class="btn-desc">B1 / B2 conversation practice</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+  <button class="btn" onclick="createLobbyMode('verbs')">
+    <div class="btn-icon" style="background:#FEF3C7;">📚</div>
+    <div class="btn-text"><div class="btn-title">Irregular Verbs</div><div class="btn-desc">Grammar tasks with verb forms</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+</div>
+
+<div id="s-create" class="screen" style="display:none;"></div>
 
 <div id="s-host" class="screen">
   <div class="app-header">
@@ -256,6 +273,26 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   </div>
   <div style="height:12px;"></div>
   <button class="btn success" onclick="startGame()">Start game →</button>
+</div>
+
+<div id="s-solo-mode" class="screen">
+  <div class="app-header">
+    <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
+    <div><div class="app-name">RolePlay</div><div class="app-tagline">Play by myself</div></div>
+  </div>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
+  <h2>Choose a mode</h2>
+  <p class="sub">Select what you want to practice solo.</p>
+  <button class="btn" onclick="goTo('s-solo')">
+    <div class="btn-icon" style="background:#EFF6FF;">💬</div>
+    <div class="btn-text"><div class="btn-title">Small Talk</div><div class="btn-desc">See both roles, practice solo</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
+  <button class="btn" onclick="goTo('s-iv-menu')">
+    <div class="btn-icon" style="background:#FEF3C7;">📚</div>
+    <div class="btn-text"><div class="btn-title">Irregular Verbs</div><div class="btn-desc">Individual grammar practice</div></div>
+    <span class="btn-arrow">›</span>
+  </button>
 </div>
 
 <div id="s-solo" class="screen">
@@ -587,10 +624,26 @@ window.selectAvatar=function(i){
 // ── Navigation ─────────────────────────────────────────────
 window.goTo=function(id){
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  const el=document.getElementById(id);
+  if(el){el.style.display='';el.classList.add('active');}
   if(id==='s-lobbies')loadLobbies();
   if(id==='s-solo')renderSolo();
   if(id==='s-iv-lobbies')ivLoadLobbies();
+};
+window.goToChooseMode=function(){
+  const name=document.getElementById('lobby-name-input').value.trim();
+  if(!name){document.getElementById('lobby-name-input').focus();return;}
+  goTo('s-choose-mode');
+};
+window.createLobbyMode=function(mode){
+  if(mode==='smalltalk') createLobby();
+  else ivCreateLobbyFromMenu();
+};
+window.ivCreateLobbyFromMenu=async function(){
+  // IV lobby name comes from the shared lobby-name-input
+  const name=document.getElementById('lobby-name-input').value.trim()||'Grammar Lobby';
+  document.getElementById('iv-lobby-name').value=name;
+  await ivCreateLobby();
 };
 
 window.submitNick=function(){
@@ -855,22 +908,50 @@ window.quitGame=async function(){
 
 // ── Lobby list ────────────────────────────────────────────────
 function loadLobbies(){
+  // Load both Small Talk and IV lobbies together
+  let stLobbies={}, ivLobbies={};
+  function render(){
+    const all=[];
+    Object.entries(stLobbies).forEach(([id,l])=>{
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      if(Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&(l.status==='waiting'||l.status==='lobby'))
+        all.push({id,l,mode:'smalltalk'});
+    });
+    Object.entries(ivLobbies).forEach(([id,l])=>{
+      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
+      if(Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&l.status==='waiting')
+        all.push({id,l,mode:'verbs'});
+    });
+    document.getElementById('lobby-list').innerHTML=all.length
+      ?all.map(({id,l,mode})=>{
+        const tag=mode==='verbs'
+          ?'<span style="font-size:10px;font-weight:800;background:#FEF3C7;color:#92400E;padding:2px 8px;border-radius:99px;flex-shrink:0;">📚 Verbs</span>'
+          :'<span style="font-size:10px;font-weight:800;background:#EFF6FF;color:#1D4ED8;padding:2px 8px;border-radius:99px;flex-shrink:0;">💬 Talk</span>';
+        const onclick=mode==='verbs'?`ivJoinLobby('${id}')`:`joinLobby('${id}')`;
+        return `<div class="lobby-row" onclick="${onclick}">
+          <div style="flex:1;"><div class="lobby-name">${l.name}</div></div>
+          ${tag}
+          <div class="lobby-count" style="margin-left:6px;">${Object.keys(l.players||{}).length} players</div>
+        </div>`;
+      }).join('')
+      :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet. Create one!</div></div>';
+  }
+  // Clean old lobbies
   onValue(ref(db,'lobbies'),snap=>{
     const lobbies=snap.val()||{};
     for(const[id,l]of Object.entries(lobbies)){
       const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
       if(age>4||Object.keys(l.players||{}).length===0)remove(ref(db,`lobbies/${id}`));
     }
-    const available=Object.entries(lobbies).filter(([,l])=>{
+    stLobbies=lobbies;render();
+  });
+  onValue(ref(db,'iv_lobbies'),snap=>{
+    const lobbies=snap.val()||{};
+    for(const[id,l]of Object.entries(lobbies)){
       const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
-      return Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&(l.status==='waiting'||l.status==='lobby');
-    });
-    document.getElementById('lobby-list').innerHTML=available.length
-      ?available.map(([id,l])=>`<div class="lobby-row" onclick="joinLobby('${id}')">
-          <div style="flex:1;"><div class="lobby-name">${l.name}</div></div>
-          <div class="lobby-count">${Object.keys(l.players||{}).length} players</div>
-        </div>`).join('')
-      :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet. Create one!</div></div>';
+      if(age>4||Object.keys(l.players||{}).length===0)remove(ref(db,`iv_lobbies/${id}`));
+    }
+    ivLobbies=lobbies;render();
   });
 }
 
@@ -1249,16 +1330,7 @@ import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(m
 });
 
 
-// ── Mode selector (dropdown) ──────────────────────────────────────
-let selectedMode = 'smalltalk';
-window.onModeChange = function(){
-  selectedMode = document.getElementById('mode-dropdown').value;
-  document.getElementById('solo-desc').textContent =
-    selectedMode === 'verbs' ? 'Individual grammar practice' : 'See both roles, practice solo';
-};
-window.menuJoin   = function(){ goTo(selectedMode==='verbs' ? 's-iv-lobbies' : 's-lobbies'); };
-window.menuCreate = function(){ goTo(selectedMode==='verbs' ? 's-iv-create'  : 's-create');  };
-window.menuSolo   = function(){ goTo(selectedMode==='verbs' ? 's-solo'       : 's-solo');    };
+// Mode routing handled by createLobbyMode and goToChooseMode
 
 </script>
 </body>
