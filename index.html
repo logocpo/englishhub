@@ -194,9 +194,6 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
   </div>
   <button class="back-btn" onclick="leaveLobby()">← Leave lobby</button>
   <div class="card">
-    <div class="label">Scenario</div>
-    <div class="card-title" id="joined-topic">—</div>
-    <div class="divider"></div>
     <div class="label">Players</div>
     <div id="joined-players"></div>
   </div>
@@ -981,7 +978,6 @@ window.joinLobby=async function(lobbyId){
   const lobby=snap.val();if(!lobby)return;
   S.lobbyName=lobby.name||'Lobby';S.timerDuration=lobby.timerDuration||90;
   document.getElementById('joined-lobby-label').textContent=lobby.name;
-  document.getElementById('joined-topic').textContent=lobby.scenarioTitle||'Scenario';
   goTo('s-joined');
   onValue(ref(db,`lobbies/${S.lobbyId}/players`),snap=>{
     document.getElementById('joined-players').innerHTML=Object.entries(snap.val()||{}).map(([id,p])=>`
@@ -1117,7 +1113,6 @@ function ivPickVerb(){
 // ── IV Navigation ─────────────────────────────────────────────────
 window.ivLoadLobbies=function(){
   if(!ref)return;
-  const db=getDatabase();
   onValue(ref(db,'iv_lobbies'),snap=>{
     const lobbies=snap.val()||{};
     for(const[id,l]of Object.entries(lobbies)){
@@ -1138,7 +1133,6 @@ window.ivLoadLobbies=function(){
 };
 
 window.ivCreateLobby=async function(){
-  const db=getDatabase();
   const name=document.getElementById('iv-lobby-name').value.trim()||'Grammar Lobby';
   const r=push(ref(db,'iv_lobbies'));
   IV.lobbyId=r.key;IV.isHost=true;
@@ -1150,7 +1144,6 @@ window.ivCreateLobby=async function(){
 }
 
 function ivListenHostLobby(){
-  const db=getDatabase();
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/players`),snap=>ivRenderHostPlayers(snap.val()||{}));
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
     if(snap.val()==='playing')ivEnterGame();
@@ -1170,12 +1163,11 @@ function ivRenderHostPlayers(players){
 }
 
 window.ivKickPlayer=async function(id){
-  await remove(ref(getDatabase(),`iv_lobbies/${IV.lobbyId}/players/${id}`));
+  await remove(ref(db,`iv_lobbies/${IV.lobbyId}/players/${id}`));
   toast('Player removed');
 };
 
 window.ivHostLeave=async function(){
-  const db=getDatabase();
   if(IV.lobbyId){
     await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'disbanded'});
     await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
@@ -1184,7 +1176,6 @@ window.ivHostLeave=async function(){
 };
 
 window.ivStartGame=async function(){
-  const db=getDatabase();
   const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
   const players=snap.val()||{};
   const ids=Object.keys(players);
@@ -1217,7 +1208,6 @@ window.ivStartGame=async function(){
 };
 
 async function ivEnterGame(){
-  const db=getDatabase();
   const gameSnap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
   const game=gameSnap.val();if(!game)return;
   IV.timerDuration=game.timerDuration||90;
@@ -1292,7 +1282,6 @@ function ivTick(numId,ringId,lblId){
 }
 
 window.ivNextTask=async function(){
-  const db=getDatabase();
   clearInterval(IV.timerInterval);
   const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
   const game=snap.val();if(!game)return;
@@ -1321,7 +1310,6 @@ window.ivNextTask=async function(){
 };
 
 window.ivJoinLobby=async function(lobbyId){
-  const db=getDatabase();
   IV.lobbyId=lobbyId;IV.isHost=false;
   await set(ref(db,`iv_lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:false});
   const snap=await get(ref(db,`iv_lobbies/${lobbyId}`));
@@ -1341,7 +1329,6 @@ window.ivJoinLobby=async function(lobbyId){
 };
 
 window.ivLeaveLobby=async function(){
-  const db=getDatabase();
   if(IV.lobbyId){
     await remove(ref(db,`iv_lobbies/${IV.lobbyId}/players/${S.uid}`));
     const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
