@@ -288,7 +288,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="btn-text"><div class="btn-title">Small Talk</div><div class="btn-desc">See both roles, practice solo</div></div>
     <span class="btn-arrow">›</span>
   </button>
-  <button class="btn" onclick="goTo('s-iv-menu')">
+  <button class="btn" onclick="goTo('s-iv-create')">
     <div class="btn-icon" style="background:#FEF3C7;">📚</div>
     <div class="btn-text"><div class="btn-title">Irregular Verbs</div><div class="btn-desc">Individual grammar practice</div></div>
     <span class="btn-arrow">›</span>
@@ -338,7 +338,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
     <div><div class="app-name">RolePlay</div><div class="app-tagline">Join a lobby</div></div>
   </div>
-  <button class="back-btn" onclick="goTo('s-iv-menu')">← Back</button>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
   <h2>Open lobbies</h2>
   <div id="iv-lobby-list"><div class="empty"><div class="empty-icon">🔍</div><div class="empty-text">Loading lobbies…</div></div></div>
 </div>
@@ -363,7 +363,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
     <div class="app-logo"><svg viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="1.8"><ellipse cx="9" cy="11" rx="5" ry="6"/><path d="M7 13.5c.5.8 1.1 1.5 2 1.5s1.5-.7 2-1.5"/><ellipse cx="17" cy="9" rx="4" ry="5"/><path d="M15 11.5c.4.7 1 1.2 2 1.2s1.6-.5 2-1.2"/><path d="M13.5 6.5c.8-.8 2-1 3.5-.5"/></svg></div>
     <div><div class="app-name">RolePlay</div><div class="app-tagline">Create a lobby</div></div>
   </div>
-  <button class="back-btn" onclick="goTo('s-iv-menu')">← Back</button>
+  <button class="back-btn" onclick="goTo('s-menu')">← Back</button>
   <h2>Set up your lobby</h2>
   <div class="label">Lobby name</div>
   <input type="text" id="iv-lobby-name" placeholder="e.g. Grammar Practice" maxlength="30">
@@ -640,10 +640,8 @@ window.createLobbyMode=function(mode){
   else ivCreateLobbyFromMenu();
 };
 window.ivCreateLobbyFromMenu=async function(){
-  // IV lobby name comes from the shared lobby-name-input
   const name=document.getElementById('lobby-name-input').value.trim()||'Grammar Lobby';
-  document.getElementById('iv-lobby-name').value=name;
-  await ivCreateLobby();
+  await ivCreateLobbyCore(name);
 };
 
 window.submitNick=function(){
@@ -1080,7 +1078,6 @@ function ivPickVerb(){
 
 // ── IV Navigation ─────────────────────────────────────────────────
 window.ivLoadLobbies=function(){
-  const {ref,onValue,remove,getDatabase}=window._fbIV||{};
   if(!ref)return;
   const db=getDatabase();
   onValue(ref(db,'iv_lobbies'),snap=>{
@@ -1103,7 +1100,6 @@ window.ivLoadLobbies=function(){
 };
 
 window.ivCreateLobby=async function(){
-  const {ref,set,push,onValue,update,getDatabase}=window._fbIV;
   const db=getDatabase();
   const name=document.getElementById('iv-lobby-name').value.trim()||'Grammar Lobby';
   const r=push(ref(db,'iv_lobbies'));
@@ -1113,15 +1109,14 @@ window.ivCreateLobby=async function(){
   document.getElementById('iv-host-lobby-name').textContent=name;
   goTo('s-iv-host');
   ivListenHostLobby();
-};
+}
 
 function ivListenHostLobby(){
-  const {ref,onValue,getDatabase}=window._fbIV;
   const db=getDatabase();
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/players`),snap=>ivRenderHostPlayers(snap.val()||{}));
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
     if(snap.val()==='playing')ivEnterGame();
-    if(snap.val()==='disbanded'){toast('Lobby closed');IV.lobbyId='';goTo('s-iv-menu');}
+    if(snap.val()==='disbanded'){toast('Lobby closed');IV.lobbyId='';goTo('s-menu');}
   });
 }
 
@@ -1137,23 +1132,20 @@ function ivRenderHostPlayers(players){
 }
 
 window.ivKickPlayer=async function(id){
-  const {ref,remove,getDatabase}=window._fbIV;
   await remove(ref(getDatabase(),`iv_lobbies/${IV.lobbyId}/players/${id}`));
   toast('Player removed');
 };
 
 window.ivHostLeave=async function(){
-  const {ref,update,remove,getDatabase}=window._fbIV;
   const db=getDatabase();
   if(IV.lobbyId){
     await update(ref(db,`iv_lobbies/${IV.lobbyId}`),{status:'disbanded'});
     await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
   }
-  IV.lobbyId='';IV.isHost=false;clearInterval(IV.timerInterval);goTo('s-iv-menu');
+  IV.lobbyId='';IV.isHost=false;clearInterval(IV.timerInterval);goTo('s-menu');
 };
 
 window.ivStartGame=async function(){
-  const {ref,get,set,update,getDatabase}=window._fbIV;
   const db=getDatabase();
   const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
   const players=snap.val()||{};
@@ -1187,7 +1179,6 @@ window.ivStartGame=async function(){
 };
 
 async function ivEnterGame(){
-  const {ref,get,onValue,getDatabase}=window._fbIV;
   const db=getDatabase();
   const gameSnap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
   const game=gameSnap.val();if(!game)return;
@@ -1263,7 +1254,6 @@ function ivTick(numId,ringId,lblId){
 }
 
 window.ivNextTask=async function(){
-  const {ref,get,set,getDatabase}=window._fbIV;
   const db=getDatabase();
   clearInterval(IV.timerInterval);
   const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/game`));
@@ -1293,7 +1283,6 @@ window.ivNextTask=async function(){
 };
 
 window.ivJoinLobby=async function(lobbyId){
-  const {ref,set,get,onValue,getDatabase}=window._fbIV;
   const db=getDatabase();
   IV.lobbyId=lobbyId;IV.isHost=false;
   await set(ref(db,`iv_lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:false});
@@ -1309,25 +1298,21 @@ window.ivJoinLobby=async function(lobbyId){
   onValue(ref(db,`iv_lobbies/${IV.lobbyId}/status`),snap=>{
     const st=snap.val();
     if(st==='playing')ivEnterGame();
-    if(st==='disbanded'){toast('Host closed the lobby');IV.lobbyId='';goTo('s-iv-menu');}
+    if(st==='disbanded'){toast('Host closed the lobby');IV.lobbyId='';goTo('s-menu');}
   });
 };
 
 window.ivLeaveLobby=async function(){
-  const {ref,remove,get,getDatabase}=window._fbIV;
   const db=getDatabase();
   if(IV.lobbyId){
     await remove(ref(db,`iv_lobbies/${IV.lobbyId}/players/${S.uid}`));
     const snap=await get(ref(db,`iv_lobbies/${IV.lobbyId}/players`));
     if(!snap.val()||Object.keys(snap.val()).length===0)await remove(ref(db,`iv_lobbies/${IV.lobbyId}`));
   }
-  IV.lobbyId='';clearInterval(IV.timerInterval);goTo('s-iv-menu');
+  IV.lobbyId='';clearInterval(IV.timerInterval);goTo('s-menu');
 };
 
-// Expose Firebase functions for IV module
-import('https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js').then(m=>{
-  window._fbIV={ref:m.ref,set:m.set,get:m.get,push:m.push,onValue:m.onValue,update:m.update,remove:m.remove,off:m.off,getDatabase:()=>db};
-});
+// IV module uses shared Firebase imports
 
 
 // Mode routing handled by createLobbyMode and goToChooseMode
