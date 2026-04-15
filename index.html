@@ -323,21 +323,10 @@ const db = getDatabase(app);
 
 // ── Content database ──────────────────────────────────────
 const CONTENT = {
-  'B1+': {
-    topics: {
-      '8C': {
-        label: 'How to give a presentation',
-        catLabels: {start:'Starting the presentation', keep:'Going through the main points', end:'Finishing', dealing:'Dealing with difficult questions'},
-        scenarios: {
-          '1': { title: 'Scenario 1 — Meeting room', image: 'content/B1+/8C/Scenario1.jpg', situation: '[A] is showing a new project idea to their manager, [B], in a small meeting room. [B] asks a few questions to understand the plan better.', roleA: { label: 'presenting the project', start: ["Today I'm going to talk about ...", "I'm going to begin with (a few facts) ...", "Can I just get a show of hands for all the people here who ... ?"], keep: ["The first point I intend to talk about is ...", "This brings me to my first point.", "Moving on to the next point, ...", "Turning now to ..."] }, roleB: { label: 'manager listening', end: ["I'd like to end with ...", "To sum up, ...", "Just to recap, ...", "Does anyone have any comments or questions?"], dealing: ["I'm not sure I can answer that now, but ...", "I'll get back to you on that.", "That's (a good question) ...", "What does everyone else think?"] } },
-          '2': { title: 'Scenario 2 — University library', image: 'content/B1+/8C/Scenario2.jpg', situation: '[A] and [B] are university students practising a group presentation in a quiet corner of the library. They take turns presenting different sections of their research.', roleA: { label: 'presenting their section', start: ["Thanks for coming/joining me ...", "I plan to speak about ...", "I intend to begin with (a short story) ...", "To begin with, (I'll describe ...)"], end: ["I'd like to end with ...", "To sum up, ...", "Just to recap, ..."] }, roleB: { label: 'presenting their section', keep: ["The first point I plan to talk about is ...", "As a final point, ...", "I'd just like to add ..."], dealing: ["Let me get back to you on that.", "That's (an interesting question) ...", "That's (a tricky question) ..."] } },
-          '3': { title: 'Scenario 3 — Community centre', image: 'content/B1+/8C/Scenario3.jpg', situation: '[A] is giving a short talk about a hobby at a local community centre. After the talk, [B] asks some very specific and challenging questions about the topic.', roleA: { label: 'giving the talk', start: ["Thanks for coming/joining me ...", "Today I'm going to speak about ...", "To begin with, (I'll describe ...)"], keep: ["Moving on to my next point, ...", "Turning now to ...", "As a final point, ..."] }, roleB: { label: 'asking questions', dealing: ["I'm not sure I can answer that now, but ...", "I'll get back to you on that.", "What does everyone else think?"], end: ["Does anyone have any comments or questions?", "To sum up, ...", "Just to recap, ..."] } },
-          '4': { title: 'Scenario 4 — Café', image: 'content/B1+/8C/Scenario4.jpg', situation: '[A] is presenting a travel plan to [B] at a café. [B] helps organise the information and asks about the budget and dates.', roleA: { label: 'presenting the travel plan', start: ["Can I just get a show of hands for all the people here who ... ?", "I plan to talk about ..."], keep: ["This brings me to my first point.", "Moving on to my next point, ...", "I'd just like to add ..."] }, roleB: { label: 'organising and asking', dealing: ["Let me get back to you on that.", "That's (a good question) ...", "I'm not sure I can answer that now, but ..."], end: ["I'd like to end with ...", "To sum up, ...", "Does anyone have any comments or questions?"] } },
-          '5': { title: 'Scenario 5 — Open office', image: 'content/B1+/8C/Scenario5.jpg', situation: '[A] and [B] are coworkers standing by a whiteboard in an open office. They are reviewing the main points of a presentation they have to give tomorrow.', roleA: { label: 'reviewing the presentation', start: ["Today I'm going to talk about ...", "I'm going to begin with (a short story) ...", "To begin with, (I'll describe ...)"], end: ["Just to recap, ...", "To sum up, ...", "I'd like to end with ..."] }, roleB: { label: 'reviewing the presentation', keep: ["The first point I'm going to talk about is ...", "This brings me to the first point.", "Moving on to the next point, ..."], dealing: ["That's (a tricky question) ...", "What does everyone else think?", "I'll get back to you on that."] } }
-        }
-      }
-    }
-  }
+  // Content will be added here per level and unit
+  // Structure: CONTENT[level].topics[unit].scenarios
+  // Example:
+  // B1: { topics: { '1C': { label: '...', catLabels: {...}, scenarios: { '1': {...} } } } }
 };
 
 // ── Avatars ───────────────────────────────────────────────
@@ -348,7 +337,7 @@ const AVATARS=[
 ];
 
 // ── State ─────────────────────────────────────────────────
-const S={nick:'',uid:'',avatar:'🦁',lobbyId:'',lobbyName:'',isHost:false,timerInterval:null,timerVal:90,timerDuration:90,myRole:'A',partnerNick:'',partnerAvatar:'🐯',level:'B1+',topicKey:'8C',scenarioKey:'1',roomId:''};
+const S={nick:'',uid:'',avatar:'🦁',lobbyId:'',lobbyName:'',isHost:false,timerInterval:null,timerVal:90,timerDuration:90,myRole:'A',partnerNick:'',partnerAvatar:'🐯',level:'B1',topicKey:'1C',scenarioKey:'1',roomId:''};
 let selectedAvatarIdx=0;
 let roomListenerOff=null;
 
@@ -399,7 +388,7 @@ window.randomScenario=function(scenarioId){
 function initAllSelects(){
   ['level-select','host-level-select','solo-level-select'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el)el.innerHTML=Object.keys(CONTENT).map(l=>`<option value="${l}">${l}</option>`).join('');
+    if(el)el.innerHTML=Object.keys(CONTENT).map(l=>`<option value="${l}">${l} — ${l==='B1'?'Intermediate':'Upper Intermediate'}</option>`).join('');
   });
   updateTopics('level-select','topic-select','scenario-select');
   updateTopics('host-level-select','host-topic-select','host-scenario-select');
@@ -442,9 +431,8 @@ async function createUnifiedLobby(name){
   // Create the actual Firebase lobby
   const r=push(ref(db,'lobbies'));
   S.lobbyId=r.key;
-  const level=Object.keys(CONTENT)[0]; const topicKey=Object.keys(CONTENT[level]?.topics||{})[0]; const scenarioKey='1';
+  const level='B1'; const topicKey='1C'; const scenarioKey='1';
   const sc=getScenario(level,topicKey,scenarioKey);
-  if(!sc){toast('No content available');return;}
   await set(r,{name,level,topicKey,scenarioKey,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',mode:'smalltalk',createdAt:Date.now()});
   await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
   goTo('s-host');
@@ -492,7 +480,6 @@ window.createLobby=async function(){
   // Defaults — host picks level/topic/scenario from the host lobby screen
   const level='B1'; const topicKey='1C'; const scenarioKey='1';
   const sc=getScenario(level,topicKey,scenarioKey);
-  if(!sc){toast('No content available');return;}
   const r=push(ref(db,'lobbies'));
   S.lobbyId=r.key;S.isHost=true;S.level=level;S.topicKey=topicKey;S.scenarioKey=scenarioKey;S.lobbyName=name;
   await set(r,{name,level,topicKey,scenarioKey,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',createdAt:Date.now()});
