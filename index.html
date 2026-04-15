@@ -246,21 +246,9 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
       <select class="host-sel" id="host-scenario-select"></select>
       <button class="rand-btn" onclick="randomScenario('host-scenario-select')">🎲 Random scenario</button>
 
-      <div class="label">Task types</div>
-      <div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px;">
-        <button class="task-toggle active" data-task="pp" onclick="toggleTask(this)">Present Perfect</button>
-        <button class="task-toggle active" data-task="past_p" onclick="toggleTask(this)">Past Perfect</button>
-        <button class="task-toggle active" data-task="fp" onclick="toggleTask(this)">Future Perfect</button>
-        <button class="task-toggle active" data-task="ppc" onclick="toggleTask(this)">Present Perfect Continuous</button>
-        <button class="task-toggle active" data-task="pastpc" onclick="toggleTask(this)">Past Perfect Continuous</button>
-        <button class="task-toggle active" data-task="cond2" onclick="toggleTask(this)">2nd Conditional</button>
-        <button class="task-toggle active" data-task="cond3" onclick="toggleTask(this)">3rd Conditional</button>
-      </div>
-      <button class="rand-btn" style="width:100%;padding:10px;margin-bottom:0;" onclick="ivToggleAll()">All / None</button>
     </div>
   </div>
-  <div style="height:12px;"></div>
-  <button class="btn success" id="host-start-btn" onclick="unifiedStartGame()">Start game →</button>
+  <button class="btn success" id="host-start-btn" onclick="unifiedStartGame()" style="margin-top:12px;">Start game →</button>
 </div>
 
 
