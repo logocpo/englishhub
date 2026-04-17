@@ -20,6 +20,9 @@ The goal of generated scenarios and given phrases is to use given phrases in a r
     * **Assignment:** Distribute phrases based on a role. If a header contains phrases for both roles, split the phrases accordingly.
     * **Selection:** Select a minimum of 3 phrases per header per scenario (or all phrases if the header contains fewer than 3).
     * **Full Coverage:** Every single phrase from the image must appear at least once across the 5 scenarios.
+* Clearly estimate each conversation and corresponded roles:scenarios:phrases.
+
+
 
 ## Step 3: Image Generation (FLUX.2)
 

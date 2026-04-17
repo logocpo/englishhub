@@ -306,7 +306,7 @@ input[type=text]:focus,select:focus{outline:none;border-color:var(--brand);}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getDatabase, ref, set, get, push, onValue, update, remove, off } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
+import { getDatabase, ref, set, get, push, onValue, update, remove, off, onDisconnect } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDA-ZcyBddKBZVRnsQfUxsC2v78gDYAajk",
@@ -524,6 +524,8 @@ async function createUnifiedLobby(name){
   if(!sc){toast('No content available');return;}
   await set(r,{name,level,topicKey,scenarioKey,scenarioTitle:sc.title,hostId:S.uid,hostNick:S.nick,timerDuration:90,status:'waiting',mode:'smalltalk',createdAt:Date.now()});
   await set(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:true});
+  // Remove host from players on disconnect (but keep lobby alive)
+  onDisconnect(ref(db,`lobbies/${S.lobbyId}/players/${S.uid}`)).remove();
   goTo('s-host');
   listenHostLobby();
 }
@@ -799,18 +801,17 @@ window.quitGame=async function(){
 
 // ── Lobby list ────────────────────────────────────────────────
 function loadLobbies(){
-  // Load both Small Talk and IV lobbies together
   let stLobbies={}, ivLobbies={};
   function render(){
     const all=[];
     Object.entries(stLobbies).forEach(([id,l])=>{
       const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
-      if(Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&(l.status==='waiting'||l.status==='lobby'))
+      if(age<=4&&(l.status==='waiting'||l.status==='lobby'))
         all.push({id,l,mode:'smalltalk'});
     });
     Object.entries(ivLobbies).forEach(([id,l])=>{
       const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
-      if(Object.keys(l.players||{}).length>0&&age<=4&&l.hostId!==S.uid&&l.status==='waiting')
+      if(age<=4&&(l.status==='waiting'||l.status==='lobby'))
         all.push({id,l,mode:'verbs'});
     });
     document.getElementById('lobby-list').innerHTML=all.length
@@ -823,20 +824,16 @@ function loadLobbies(){
       }).join('')
       :'<div class="empty"><div class="empty-icon">🏠</div><div class="empty-text">No open lobbies yet. Create one!</div></div>';
   }
-  // Clean old lobbies
   onValue(ref(db,'lobbies'),snap=>{
-    const lobbies=snap.val()||{};
-    for(const[id,l]of Object.entries(lobbies)){
-      const age=(Date.now()-(l.createdAt||0))/(1000*60*60);
-      if(age>4||Object.keys(l.players||{}).length===0)remove(ref(db,`lobbies/${id}`));
-    }
-    stLobbies=lobbies;render();
+    stLobbies=snap.val()||{};render();
   });
 }
 
 window.joinLobby=async function(lobbyId){
   S.lobbyId=lobbyId;S.isHost=false;
   await set(ref(db,`lobbies/${lobbyId}/players/${S.uid}`),{nick:S.nick,avatar:S.avatar,isHost:false});
+  // Remove player on disconnect
+  onDisconnect(ref(db,`lobbies/${lobbyId}/players/${S.uid}`)).remove();
   const snap=await get(ref(db,`lobbies/${lobbyId}`));
   const lobby=snap.val();if(!lobby)return;
   S.lobbyName=lobby.name||'Lobby';S.timerDuration=lobby.timerDuration||90;
